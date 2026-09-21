@@ -22,13 +22,13 @@
     header {
       background: #111;
       color: white;
-      padding: 22px;
+      padding: 24px;
       text-align: center;
       border-bottom: 5px solid #ffc650;
     }
 
     header h1 {
-      margin-bottom: 5px;
+      margin-bottom: 6px;
     }
 
     .container {
@@ -84,12 +84,18 @@
     }
 
     input,
-    select {
+    select,
+    textarea {
       width: 100%;
       padding: 12px;
       border: 1px solid #ccc;
       border-radius: 6px;
       font-size: 16px;
+    }
+
+    textarea {
+      min-height: 90px;
+      resize: vertical;
     }
 
     button {
@@ -166,62 +172,61 @@
 
   </div>
 
-
   <div class="section">
 
     <h2>Create New Booking</h2>
 
     <form id="bookingForm">
 
-      <label>Customer Name</label>
+      <label for="customerName">Customer Name</label>
       <input type="text" id="customerName" required>
 
-      <label>Phone Number</label>
+      <label for="phone">Phone Number</label>
       <input type="tel" id="phone" required>
 
-      <label>Email</label>
+      <label for="email">Email</label>
       <input type="email" id="email">
 
-      <label>Delivery Address</label>
+      <label for="address">Delivery Address</label>
       <input type="text" id="address" required>
 
-      <label>Dumpster Package</label>
+      <label for="dumpster">Dumpster Package</label>
 
-      <select id="dumpster">
+      <select id="dumpster" required>
 
         <option value="">Choose a dumpster</option>
 
-        <option>
+        <option value="20 Yard - 1 Ton - $389 - 7 Days">
           20 Yard - 1 Ton - $389 - 7 Days
         </option>
 
-        <option>
+        <option value="20 Yard - 2 Tons - $469 - 12 Days">
           20 Yard - 2 Tons - $469 - 12 Days
         </option>
 
-        <option>
+        <option value="20 Yard - 3 Tons - $529 - 12 Days">
           20 Yard - 3 Tons - $529 - 12 Days
         </option>
 
-        <option>
+        <option value="30 Yard - 4 Tons - $595 - 12 Days">
           30 Yard - 4 Tons - $595 - 12 Days
         </option>
 
-        <option>
+        <option value="30 Yard - 5 Tons - $659 - 12 Days">
           30 Yard - 5 Tons - $659 - 12 Days
         </option>
 
       </select>
 
-      <label>Delivery Date</label>
+      <label for="deliveryDate">Delivery Date</label>
       <input type="date" id="deliveryDate" required>
 
-      <label>Placement Instructions</label>
-      <input
-        type="text"
+      <label for="instructions">Placement Instructions</label>
+
+      <textarea
         id="instructions"
-        placeholder="Example: Left side of driveway"
-      >
+        placeholder="Example: Place dumpster on left side of driveway."
+      ></textarea>
 
       <button type="submit">
         Create Booking
@@ -230,7 +235,6 @@
     </form>
 
   </div>
-
 
   <div class="section">
 
@@ -249,10 +253,8 @@
 
       <tbody id="bookingList">
 
-        <tr>
-          <td colspan="4">
-            No bookings yet.
-          </td>
+        <tr id="emptyRow">
+          <td colspan="4">No bookings yet.</td>
         </tr>
 
       </tbody>
@@ -263,47 +265,51 @@
 
 </div>
 
-
 <footer>
-  Dumpster Crawl & Dumpster Rentals<br>
-  262-664-9198
+  <strong>Dumpster Crawl & Dumpster Rentals</strong><br>
+  262-664-9198<br>
+  Affordability for the Community
 </footer>
-
 
 <script>
 
-const form = document.getElementById("bookingForm");
-const bookingList = document.getElementById("bookingList");
+  const form = document.getElementById("bookingForm");
+  const bookingList = document.getElementById("bookingList");
 
-form.addEventListener("submit", function(event) {
+  form.addEventListener("submit", function(event) {
 
-  event.preventDefault();
+    event.preventDefault();
 
-  const customer =
-    document.getElementById("customerName").value;
+    const customer =
+      document.getElementById("customerName").value;
 
-  const dumpster =
-    document.getElementById("dumpster").value;
+    const dumpster =
+      document.getElementById("dumpster").value;
 
-  const delivery =
-    document.getElementById("deliveryDate").value;
+    const delivery =
+      document.getElementById("deliveryDate").value;
 
-  bookingList.innerHTML = "";
+    const emptyRow =
+      document.getElementById("emptyRow");
 
-  const row = document.createElement("tr");
+    if (emptyRow) {
+      emptyRow.remove();
+    }
 
-  row.innerHTML = `
-    <td>${customer}</td>
-    <td>${dumpster}</td>
-    <td>${delivery}</td>
-    <td>Scheduled</td>
-  `;
+    const row = document.createElement("tr");
 
-  bookingList.appendChild(row);
+    row.innerHTML = `
+      <td>${customer}</td>
+      <td>${dumpster}</td>
+      <td>${delivery}</td>
+      <td>Scheduled</td>
+    `;
 
-  form.reset();
+    bookingList.appendChild(row);
 
-});
+    form.reset();
+
+  });
 
 </script>
 
