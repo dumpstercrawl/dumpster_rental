@@ -3,161 +3,304 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dumpster Crawl | Rental Management V2</title>
+
+  <title>Dumpster Crawl & Rentals | Management Software V3</title>
 
   <style>
     :root {
       --yellow: #ffc650;
-      --yellow-dark: #e6aa25;
-      --black: #080808;
-      --dark: #171717;
+      --yellow-dark: #e8ad31;
+      --black: #0b0b0b;
+      --dark: #181818;
       --gray: #6b7280;
-      --light: #f4f4f4;
+      --light-gray: #f3f4f6;
+      --border: #e5e7eb;
       --white: #ffffff;
-      --green: #198754;
-      --red: #c0392b;
-      --blue: #2563eb;
-      --border: #dddddd;
+      --green: #15803d;
+      --green-bg: #dcfce7;
+      --red: #b91c1c;
+      --red-bg: #fee2e2;
+      --blue: #1d4ed8;
+      --blue-bg: #dbeafe;
+      --orange: #c2410c;
+      --orange-bg: #ffedd5;
     }
 
     * {
       box-sizing: border-box;
     }
 
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: var(--light);
-      color: #111;
+      background: #f5f5f5;
+      color: #111827;
     }
 
-    header {
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app {
+      min-height: 100vh;
+      display: flex;
+    }
+
+    /* ================================
+       SIDEBAR
+       ================================ */
+
+    .sidebar {
+      width: 245px;
       background: var(--black);
       color: white;
-      border-bottom: 5px solid var(--yellow);
-      padding: 18px 28px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 20px;
+      min-height: 100vh;
+      position: fixed;
+      left: 0;
+      top: 0;
+      padding: 0 0 25px;
+      z-index: 10;
     }
 
-    .brand h1 {
-      margin: 0;
-      font-size: 27px;
+    .brand {
+      padding: 24px 20px;
+      border-bottom: 4px solid var(--yellow);
     }
 
-    .brand p {
-      margin: 4px 0 0;
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .brand-subtitle {
+      margin-top: 7px;
       color: var(--yellow);
-      font-weight: bold;
+      font-size: 12px;
+      font-weight: 700;
     }
 
     .version {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 4px 8px;
+      border-radius: 20px;
+      background: #2b2b2b;
+      color: #ddd;
+      font-size: 11px;
+    }
+
+    .nav {
+      padding: 18px 12px;
+    }
+
+    .nav-item {
+      width: 100%;
+      border: 0;
+      background: transparent;
+      color: #d1d5db;
+      padding: 12px 14px;
+      margin-bottom: 5px;
+      text-align: left;
+      border-radius: 8px;
+      font-weight: 700;
+    }
+
+    .nav-item:hover {
+      background: #242424;
+      color: white;
+    }
+
+    .nav-item.active {
       background: var(--yellow);
       color: #111;
-      font-weight: bold;
-      padding: 7px 12px;
-      border-radius: 20px;
-      font-size: 13px;
     }
 
-    nav {
-      background: #202020;
-      padding: 0 25px;
+    /* ================================
+       MAIN
+       ================================ */
+
+    .main {
+      width: calc(100% - 245px);
+      margin-left: 245px;
+      min-height: 100vh;
+    }
+
+    .topbar {
+      background: white;
+      border-bottom: 1px solid var(--border);
+      padding: 17px 24px;
       display: flex;
-      gap: 4px;
-      overflow-x: auto;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      z-index: 5;
     }
 
-    nav button {
-      width: auto;
-      margin: 0;
-      border-radius: 0;
-      background: transparent;
-      color: white;
-      padding: 14px 17px;
-      border-bottom: 4px solid transparent;
-      white-space: nowrap;
+    .topbar-title {
+      font-size: 20px;
+      font-weight: 800;
     }
 
-    nav button:hover,
-    nav button.active {
-      background: #2b2b2b;
-      border-bottom-color: var(--yellow);
+    .topbar-right {
+      display: flex;
+      gap: 10px;
+      align-items: center;
     }
 
-    .container {
-      max-width: 1300px;
-      margin: auto;
+    .search {
+      width: 290px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      outline: none;
+    }
+
+    .search:focus {
+      border-color: var(--yellow-dark);
+    }
+
+    .content {
       padding: 25px;
+      max-width: 1500px;
+      margin: auto;
     }
 
-    .page {
+    .page-section {
       display: none;
     }
 
-    .page.active {
+    .page-section.active {
       display: block;
     }
 
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 15px;
-      margin-bottom: 25px;
+    .page-heading {
+      margin-bottom: 20px;
     }
 
-    .card {
+    .page-heading h1 {
+      margin: 0;
+      font-size: 28px;
+    }
+
+    .page-heading p {
+      margin: 6px 0 0;
+      color: var(--gray);
+    }
+
+    /* ================================
+       DASHBOARD CARDS
+       ================================ */
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 22px;
+    }
+
+    .stat-card {
       background: white;
-      border-radius: 10px;
-      padding: 18px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      border-radius: 12px;
+      padding: 20px;
       border-top: 5px solid var(--yellow);
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
     }
 
-    .card h3 {
-      margin: 0 0 10px;
+    .stat-label {
       font-size: 12px;
-      color: #666;
       text-transform: uppercase;
+      letter-spacing: .5px;
+      color: var(--gray);
+      font-weight: 800;
     }
 
-    .number {
-      font-size: 32px;
-      font-weight: bold;
+    .stat-number {
+      margin-top: 7px;
+      font-size: 35px;
+      font-weight: 900;
     }
 
-    .layout {
+    .stat-note {
+      color: var(--gray);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    /* ================================
+       PANELS
+       ================================ */
+
+    .grid-two {
       display: grid;
-      grid-template-columns: 1fr 1.35fr;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .grid-rental {
+      display: grid;
+      grid-template-columns: .85fr 1.4fr;
       gap: 20px;
     }
 
     .panel {
       background: white;
-      padding: 22px;
-      border-radius: 10px;
-      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      border-radius: 12px;
+      padding: 21px;
       margin-bottom: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
     }
 
-    .panel h2 {
-      margin-top: 0;
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      padding-bottom: 12px;
+      margin-bottom: 15px;
       border-bottom: 3px solid var(--yellow);
-      padding-bottom: 10px;
     }
 
-    .panel h3 {
-      margin-top: 0;
+    .panel-header h2 {
+      margin: 0;
+      font-size: 19px;
+    }
+
+    /* ================================
+       FORMS
+       ================================ */
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .form-group {
+      margin-bottom: 13px;
+    }
+
+    .form-group.full {
+      grid-column: 1 / -1;
     }
 
     label {
       display: block;
-      margin-top: 13px;
+      font-size: 13px;
+      font-weight: 800;
       margin-bottom: 5px;
-      font-weight: bold;
-      font-size: 14px;
     }
 
     input,
@@ -165,273 +308,375 @@
     textarea {
       width: 100%;
       padding: 11px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      font-size: 15px;
+      border: 1px solid #d1d5db;
+      border-radius: 7px;
       background: white;
+      outline: none;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--yellow-dark);
+      box-shadow: 0 0 0 2px rgba(255,198,80,.2);
     }
 
     textarea {
-      min-height: 80px;
+      min-height: 85px;
       resize: vertical;
     }
 
-    button {
-      margin-top: 15px;
-      padding: 12px 16px;
-      border: none;
-      border-radius: 6px;
-      background: var(--yellow);
-      color: #111;
-      font-size: 15px;
-      font-weight: bold;
-      cursor: pointer;
+    .required {
+      color: var(--red);
     }
 
-    button:hover {
+    /* ================================
+       BUTTONS
+       ================================ */
+
+    .primary-btn,
+    .secondary-btn,
+    .danger-btn,
+    .small-btn {
+      border: 0;
+      border-radius: 7px;
+      font-weight: 800;
+      padding: 10px 14px;
+    }
+
+    .primary-btn {
+      background: var(--yellow);
+      color: #111;
+    }
+
+    .primary-btn:hover {
       background: var(--yellow-dark);
     }
 
-    .secondary {
-      background: #e5e7eb;
+    .secondary-btn {
+      background: #111;
+      color: white;
     }
 
-    .danger {
-      background: #fee2e2;
-      color: #991b1b;
+    .danger-btn {
+      background: var(--red-bg);
+      color: var(--red);
     }
 
-    .success {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .small-button {
-      width: auto;
-      margin: 0;
+    .small-btn {
       padding: 7px 10px;
       font-size: 12px;
     }
 
-    .dumpster {
-      padding: 13px;
-      border: 1px solid #ddd;
-      border-radius: 7px;
-      margin-bottom: 9px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .available {
-      color: var(--green);
-      font-weight: bold;
-    }
-
-    .rented {
-      color: var(--red);
-      font-weight: bold;
-    }
-
-    .status-pill {
-      display: inline-block;
-      padding: 5px 9px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: bold;
-    }
-
-    .status-available {
-      background: #dcfce7;
-      color: #166534;
-    }
-
-    .status-rented {
-      background: #fee2e2;
-      color: #991b1b;
-    }
-
-    table {
+    .full-btn {
       width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
     }
 
-    th {
-      background: #111;
-      color: white;
-      text-align: left;
-      padding: 10px;
-      font-size: 13px;
-    }
+    /* ================================
+       INVENTORY
+       ================================ */
 
-    td {
-      padding: 10px;
-      border-bottom: 1px solid #ddd;
-      vertical-align: top;
-      font-size: 14px;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
-    }
-
-    .empty {
-      color: #777;
-      padding: 15px 0;
-    }
-
-    .small {
-      color: #666;
-      font-size: 13px;
-    }
-
-    .notice {
-      background: #fff7d6;
-      border-left: 5px solid var(--yellow);
-      padding: 12px;
-      margin: 12px 0;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-
-    .info-box {
-      background: #eff6ff;
-      border-left: 5px solid #3b82f6;
-      padding: 12px;
-      margin: 12px 0;
-      border-radius: 5px;
-      font-size: 14px;
-    }
-
-    .pickup-box {
-      background: #f3f4f6;
-      padding: 12px;
-      border-radius: 6px;
-      margin-top: 12px;
-    }
-
-    .pickup-date {
-      font-size: 19px;
-      font-weight: bold;
-    }
-
-    .package-grid {
+    .inventory-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      gap: 12px;
-      margin-top: 12px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
     }
 
-    .package {
-      border: 2px solid #ddd;
-      padding: 14px;
-      border-radius: 8px;
-      cursor: pointer;
+    .inventory-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 15px;
       background: white;
     }
 
-    .package:hover {
-      border-color: var(--yellow);
+    .inventory-card-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
     }
 
-    .package.selected {
-      border-color: var(--yellow);
-      background: #fff9e8;
+    .dumpster-id {
+      font-size: 19px;
+      font-weight: 900;
     }
 
-    .package-title {
-      font-weight: bold;
-      margin-bottom: 5px;
+    .small {
+      font-size: 12px;
+      color: var(--gray);
+      margin-top: 3px;
     }
 
-    .package-price {
-      font-size: 22px;
-      font-weight: bold;
+    .status-badge {
+      display: inline-block;
+      padding: 5px 8px;
+      border-radius: 20px;
+      font-size: 10px;
+      font-weight: 900;
+      letter-spacing: .4px;
     }
 
-    .schedule-item {
-      border-left: 5px solid var(--yellow);
-      background: #fafafa;
-      padding: 13px;
+    .status-available {
+      background: var(--green-bg);
+      color: var(--green);
+    }
+
+    .status-rented {
+      background: var(--red-bg);
+      color: var(--red);
+    }
+
+    .status-completed {
+      background: var(--blue-bg);
+      color: var(--blue);
+    }
+
+    .status-cancelled {
+      background: #eee;
+      color: #555;
+    }
+
+    /* ================================
+       RENTAL CARDS
+       ================================ */
+
+    .rental-card,
+    .customer-card,
+    .schedule-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 15px;
       margin-bottom: 10px;
-      border-radius: 6px;
+      background: white;
     }
 
-    .schedule-item strong {
-      display: block;
-      margin-bottom: 4px;
+    .rental-card {
+      display: grid;
+      grid-template-columns: 1.3fr .9fr auto;
+      gap: 15px;
+      align-items: center;
     }
+
+    .rental-card h3 {
+      margin: 0 0 5px;
+    }
+
+    .rental-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 95px;
+    }
+
+    .customer-card {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    .schedule-card {
+      display: grid;
+      grid-template-columns: 120px 100px 1fr;
+      gap: 15px;
+      align-items: center;
+    }
+
+    .schedule-type {
+      font-weight: 900;
+    }
+
+    .delivery {
+      color: var(--blue);
+    }
+
+    .pickup {
+      color: var(--orange);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 35px 15px;
+      color: var(--gray);
+      border: 1px dashed #d1d5db;
+      border-radius: 9px;
+    }
+
+    /* ================================
+       PRICING
+       ================================ */
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+    }
+
+    .price-card {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 17px;
+    }
+
+    .price-card h3 {
+      margin: 0 0 13px;
+    }
+
+    .price-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 9px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .price-row:last-child {
+      border-bottom: 0;
+    }
+
+    .price {
+      font-weight: 900;
+    }
+
+    /* ================================
+       SETTINGS
+       ================================ */
 
     .settings-row {
       display: flex;
       justify-content: space-between;
+      gap: 15px;
       align-items: center;
-      border-bottom: 1px solid #eee;
-      padding: 14px 0;
-      gap: 20px;
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .settings-row:last-of-type {
+      border-bottom: 0;
     }
 
     .toggle {
-      width: auto;
-      transform: scale(1.25);
+      width: 22px;
+      height: 22px;
     }
 
-    .price-row {
-      display: grid;
-      grid-template-columns: 2fr 1fr;
-      gap: 15px;
-      align-items: end;
-      margin-bottom: 12px;
-    }
+    /* ================================
+       MODAL
+       ================================ */
 
-    .price-row label {
-      margin-top: 0;
-    }
-
-    .customer-summary {
-      background: #fafafa;
-      padding: 13px;
-      border-radius: 6px;
-      margin-bottom: 10px;
-      border: 1px solid #eee;
-    }
-
-    .footer-note {
-      color: #777;
-      text-align: center;
-      font-size: 12px;
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
       padding: 20px;
     }
 
+    .modal.open {
+      display: flex;
+    }
+
+    .modal-box {
+      background: white;
+      width: 100%;
+      max-width: 550px;
+      max-height: 90vh;
+      overflow-y: auto;
+      border-radius: 12px;
+      padding: 22px;
+    }
+
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+
+    .modal-top h2 {
+      margin: 0;
+    }
+
+    .close-btn {
+      border: 0;
+      background: #eee;
+      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      font-weight: 900;
+    }
+
+    /* ================================
+       MOBILE
+       ================================ */
+
     @media (max-width: 1000px) {
-      .cards {
-        grid-template-columns: repeat(2, 1fr);
+      .stats-grid {
+        grid-template-columns: 1fr 1fr;
       }
 
-      .layout {
+      .grid-two,
+      .grid-rental {
         grid-template-columns: 1fr;
+      }
+
+      .inventory-grid {
+        grid-template-columns: 1fr 1fr;
       }
     }
 
-    @media (max-width: 650px) {
-      header {
-        align-items: flex-start;
-        flex-direction: column;
+    @media (max-width: 760px) {
+      .sidebar {
+        position: relative;
+        width: 100%;
+        min-height: auto;
       }
 
-      .container {
-        padding: 15px;
+      .app {
+        display: block;
       }
 
-      .cards,
-      .package-grid {
+      .main {
+        margin-left: 0;
+        width: 100%;
+      }
+
+      .nav {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .topbar {
+        position: relative;
+        display: block;
+      }
+
+      .topbar-right {
+        margin-top: 10px;
+      }
+
+      .search {
+        width: 100%;
+      }
+
+      .stats-grid,
+      .inventory-grid,
+      .pricing-grid,
+      .form-grid {
         grid-template-columns: 1fr;
       }
 
-      .price-row {
+      .rental-card {
         grid-template-columns: 1fr;
+      }
+
+      .schedule-card {
+        grid-template-columns: 1fr;
+      }
+
+      .form-group.full {
+        grid-column: auto;
       }
     }
   </style>
@@ -439,316 +684,805 @@
 
 <body>
 
-<header>
-  <div class="brand">
-    <h1>Dumpster Crawl & Rentals</h1>
-    <p>Rental Management Software</p>
-  </div>
+<div class="app">
 
-  <div class="version">V2</div>
-</header>
+  <!-- =====================================
+       SIDEBAR
+       ===================================== -->
 
-<nav>
-  <button class="nav-button active" data-page="dashboard">
-    Dashboard
-  </button>
+  <aside class="sidebar">
 
-  <button class="nav-button" data-page="newRental">
-    New Rental
-  </button>
-
-  <button class="nav-button" data-page="schedule">
-    Schedule
-  </button>
-
-  <button class="nav-button" data-page="customers">
-    Customers
-  </button>
-
-  <button class="nav-button" data-page="settings">
-    Settings
-  </button>
-</nav>
-
-<div class="container">
-
-  <!-- DASHBOARD -->
-
-  <section id="dashboard" class="page active">
-
-    <div class="cards">
-
-      <div class="card">
-        <h3>Total Dumpsters</h3>
-        <div class="number" id="totalDumpsters">6</div>
+    <div class="brand">
+      <div class="brand-title">
+        Dumpster Crawl<br>
+        & Rentals
       </div>
 
-      <div class="card">
-        <h3>Available</h3>
-        <div class="number" id="availableDumpsters">6</div>
+      <div class="brand-subtitle">
+        Affordability for the Community
       </div>
 
-      <div class="card">
-        <h3>Active Rentals</h3>
-        <div class="number" id="activeRentals">0</div>
-      </div>
-
-      <div class="card">
-        <h3>Deliveries Today</h3>
-        <div class="number" id="deliveriesToday">0</div>
-      </div>
-
-      <div class="card">
-        <h3>Pickups Today</h3>
-        <div class="number" id="pickupsToday">0</div>
-      </div>
-
+      <span class="version">
+        Management Software V3
+      </span>
     </div>
 
-    <div class="layout">
+    <nav class="nav">
 
-      <div class="panel">
+      <button class="nav-item active" data-section="dashboard">
+        Dashboard
+      </button>
 
-        <h2>Dumpster Inventory</h2>
+      <button class="nav-item" data-section="newRental">
+        New Rental
+      </button>
 
-        <div id="inventory"></div>
+      <button class="nav-item" data-section="rentals">
+        Rentals
+      </button>
 
+      <button class="nav-item" data-section="inventory">
+        Dumpster Inventory
+      </button>
+
+      <button class="nav-item" data-section="schedule">
+        Delivery & Pickup
+      </button>
+
+      <button class="nav-item" data-section="customers">
+        Customers
+      </button>
+
+      <button class="nav-item" data-section="pricing">
+        Pricing
+      </button>
+
+      <button class="nav-item" data-section="settings">
+        Settings
+      </button>
+
+    </nav>
+
+  </aside>
+
+
+  <!-- =====================================
+       MAIN
+       ===================================== -->
+
+  <main class="main">
+
+    <header class="topbar">
+
+      <div class="topbar-title">
+        Rental Management
       </div>
 
-      <div>
-
-        <div class="panel">
-
-          <h2>Today's Schedule</h2>
-
-          <div id="todaySchedule"></div>
-
-        </div>
-
-        <div class="panel">
-
-          <h2>Active Rentals</h2>
-
-          <div id="rentalArea"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- NEW RENTAL -->
-
-  <section id="newRental" class="page">
-
-    <div class="layout">
-
-      <div class="panel">
-
-        <h2>Create New Booking</h2>
-
-        <form id="rentalForm">
-
-          <label>Customer Name *</label>
-          <input id="customerName" required>
-
-          <label>Phone Number *</label>
-          <input id="phone" type="tel" required>
-
-          <label>Email</label>
-          <input id="email" type="email">
-
-          <label>Delivery Address *</label>
-          <input id="address" required>
-
-          <label>City *</label>
-          <input id="city" required>
-
-          <label>Dumpster Size *</label>
-
-          <select id="sizeSelect" required>
-            <option value="">Choose size</option>
-            <option value="20 Yard">20 Yard Dumpster</option>
-            <option value="30 Yard">30 Yard Dumpster</option>
-          </select>
-
-          <label>Choose Dumpster *</label>
-          <select id="dumpsterSelect" required>
-            <option value="">Choose size first</option>
-          </select>
-
-          <label>Rental Package *</label>
-
-          <select id="packageSelect" required>
-            <option value="">Choose package</option>
-          </select>
-
-          <div id="packageInfo" class="pickup-box" style="display:none;">
-            <strong>Locked Booking Price</strong>
-            <div id="lockedPrice" class="pickup-date"></div>
-            <div id="packageDetails" class="small"></div>
-          </div>
-
-          <label>Delivery Date *</label>
-          <input id="deliveryDate" type="date" required>
-
-          <div class="pickup-box">
-            <div class="small">Standard Pickup Date</div>
-            <div id="autoPickupDate" class="pickup-date">
-              Choose a delivery date
-            </div>
-            <div class="small">
-              Standard rental period: 10 days from delivery.
-            </div>
-          </div>
-
-          <label>Placement / Delivery Instructions</label>
-          <textarea
-            id="notes"
-            placeholder="Where should the dumpster be placed? Gate codes, driveway instructions, special notes, etc."
-          ></textarea>
-
-          <div class="notice">
-            Need the dumpster picked up before the scheduled pickup date?
-            Call or text Dumpster Crawl & Rentals to request an early pickup.
-          </div>
-
-          <button type="submit">
-            Create Rental
-          </button>
-
-        </form>
-
-      </div>
-
-      <div>
-
-        <div class="panel">
-
-          <h2>Booking Summary</h2>
-
-          <div id="bookingSummary" class="empty">
-            Start entering the booking information to see the rental summary.
-          </div>
-
-        </div>
-
-        <div class="panel">
-
-          <h2>Available Inventory</h2>
-
-          <div id="bookingInventory"></div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-  </section>
-
-
-  <!-- SCHEDULE -->
-
-  <section id="schedule" class="page">
-
-    <div class="panel">
-
-      <h2>Delivery & Pickup Schedule</h2>
-
-      <div class="info-box">
-        Deliveries and pickups are generated automatically from active rentals.
-      </div>
-
-      <div id="fullSchedule"></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- CUSTOMERS -->
-
-  <section id="customers" class="page">
-
-    <div class="panel">
-
-      <h2>Customer Records</h2>
-
-      <div id="customerRecords"></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- SETTINGS -->
-
-  <section id="settings" class="page">
-
-    <div class="layout">
-
-      <div class="panel">
-
-        <h2>Edit Package Prices</h2>
-
-        <div class="notice">
-          Changing a price here changes the price for future bookings only.
-          Existing rentals keep the price they booked at.
-        </div>
-
-        <div id="priceEditor"></div>
-
-        <button id="savePrices">
-          Save Prices
+      <div class="topbar-right">
+
+        <input
+          id="globalSearch"
+          class="search"
+          type="search"
+          placeholder="Search customer, phone, address or dumpster..."
+        >
+
+        <button
+          class="primary-btn"
+          onclick="showSection('newRental')"
+        >
+          + New Rental
         </button>
 
       </div>
 
-      <div>
+    </header>
+
+
+    <div class="content">
+
+      <!-- =================================
+           DASHBOARD
+           ================================= -->
+
+      <section
+        id="dashboard"
+        class="page-section active"
+      >
+
+        <div class="page-heading">
+          <h1>Dashboard</h1>
+          <p>
+            Dumpster Crawl & Rentals at a glance.
+          </p>
+        </div>
+
+        <div class="stats-grid">
+
+          <div class="stat-card">
+            <div class="stat-label">
+              Total Dumpsters
+            </div>
+
+            <div
+              class="stat-number"
+              id="totalDumpsters"
+            >
+              6
+            </div>
+
+            <div class="stat-note">
+              5 twenty-yard • 1 thirty-yard
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">
+              Available
+            </div>
+
+            <div
+              class="stat-number"
+              id="availableDumpsters"
+            >
+              6
+            </div>
+
+            <div class="stat-note">
+              Ready for rental
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">
+              Active Rentals
+            </div>
+
+            <div
+              class="stat-number"
+              id="activeRentalCount"
+            >
+              0
+            </div>
+
+            <div class="stat-note">
+              Currently assigned
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-label">
+              Pickups Next 7 Days
+            </div>
+
+            <div
+              class="stat-number"
+              id="upcomingPickupCount"
+            >
+              0
+            </div>
+
+            <div class="stat-note">
+              Scheduled pickups
+            </div>
+          </div>
+
+        </div>
+
+
+        <div class="grid-two">
+
+          <div class="panel">
+
+            <div class="panel-header">
+              <h2>Dumpster Status</h2>
+
+              <button
+                class="secondary-btn small-btn"
+                onclick="showSection('inventory')"
+              >
+                View All
+              </button>
+            </div>
+
+            <div id="dashboardInventory"></div>
+
+          </div>
+
+
+          <div class="panel">
+
+            <div class="panel-header">
+              <h2>Active Rentals</h2>
+
+              <button
+                class="secondary-btn small-btn"
+                onclick="showSection('rentals')"
+              >
+                View All
+              </button>
+            </div>
+
+            <div id="dashboardRentals"></div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           NEW RENTAL
+           ================================= -->
+
+      <section
+        id="newRental"
+        class="page-section"
+      >
+
+        <div class="page-heading">
+          <h1>Create New Rental</h1>
+          <p>
+            Add a customer, assign a dumpster,
+            and schedule delivery and pickup.
+          </p>
+        </div>
+
+
+        <div class="grid-rental">
+
+          <div class="panel">
+
+            <div class="panel-header">
+              <h2>Rental Information</h2>
+            </div>
+
+
+            <form id="rentalForm">
+
+              <div class="form-group">
+                <label>
+                  Customer Name
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="customerName"
+                  type="text"
+                  required
+                >
+              </div>
+
+
+              <div class="form-grid">
+
+                <div class="form-group">
+                  <label>
+                    Phone
+                    <span class="required">*</span>
+                  </label>
+
+                  <input
+                    id="phone"
+                    type="tel"
+                    required
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label>Email</label>
+
+                  <input
+                    id="email"
+                    type="email"
+                  >
+                </div>
+
+              </div>
+
+
+              <div class="form-group">
+                <label>
+                  Delivery Address
+                  <span class="required">*</span>
+                </label>
+
+                <input
+                  id="address"
+                  type="text"
+                  required
+                >
+              </div>
+
+
+              <div class="form-grid">
+
+                <div class="form-group">
+                  <label>
+                    Dumpster
+                    <span class="required">*</span>
+                  </label>
+
+                  <select
+                    id="dumpsterSelect"
+                    required
+                  >
+                  </select>
+                </div>
+
+                <div class="form-group">
+                  <label>Rental Package</label>
+
+                  <select id="rentalPackage">
+                    <option value="">
+                      Select package
+                    </option>
+
+                    <option value="20-1">
+                      20 yd • 1 ton • 7 days • $389
+                    </option>
+
+                    <option value="20-2">
+                      20 yd • 2 tons • 12 days • $469
+                    </option>
+
+                    <option value="20-3">
+                      20 yd • 3 tons • 12 days • $529
+                    </option>
+
+                    <option value="30-4">
+                      30 yd • 4 tons • 12 days • $595
+                    </option>
+
+                    <option value="30-5">
+                      30 yd • 5 tons • 12 days • $659
+                    </option>
+                  </select>
+                </div>
+
+              </div>
+
+
+              <div class="form-grid">
+
+                <div class="form-group">
+                  <label>
+                    Delivery Date
+                    <span class="required">*</span>
+                  </label>
+
+                  <input
+                    id="deliveryDate"
+                    type="date"
+                    required
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label>
+                    Pickup Date
+                    <span class="required">*</span>
+                  </label>
+
+                  <input
+                    id="pickupDate"
+                    type="date"
+                    required
+                  >
+                </div>
+
+              </div>
+
+
+              <div class="form-grid">
+
+                <div class="form-group">
+                  <label>Rental Price</label>
+
+                  <input
+                    id="price"
+                    type="number"
+                    step="0.01"
+                    placeholder="0.00"
+                  >
+                </div>
+
+                <div class="form-group">
+                  <label>Payment Status</label>
+
+                  <select id="paymentStatus">
+                    <option value="Unpaid">
+                      Unpaid
+                    </option>
+
+                    <option value="Deposit Paid">
+                      Deposit Paid
+                    </option>
+
+                    <option value="Paid">
+                      Paid in Full
+                    </option>
+                  </select>
+                </div>
+
+              </div>
+
+
+              <div class="form-group">
+                <label>Placement Instructions</label>
+
+                <textarea
+                  id="placement"
+                  placeholder="Where should the dumpster be placed?"
+                ></textarea>
+              </div>
+
+
+              <div class="form-group">
+                <label>Internal Notes</label>
+
+                <textarea
+                  id="notes"
+                  placeholder="Gate codes, customer notes, special instructions, etc."
+                ></textarea>
+              </div>
+
+
+              <button
+                type="submit"
+                class="primary-btn full-btn"
+              >
+                Create Rental
+              </button>
+
+            </form>
+
+          </div>
+
+
+          <div>
+
+            <div class="panel">
+
+              <div class="panel-header">
+                <h2>Available Dumpsters</h2>
+              </div>
+
+              <div id="newRentalInventory"></div>
+
+            </div>
+
+
+            <div class="panel">
+
+              <div class="panel-header">
+                <h2>Rental Policies</h2>
+              </div>
+
+              <div class="small">
+                • Driveway protection available with Rolliskates.
+              </div>
+
+              <div class="small">
+                • No concrete or dirt.
+              </div>
+
+              <div class="small">
+                • No appliances, batteries or chemical waste.
+              </div>
+
+              <div class="small">
+                • Card payments may include processing fees.
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           RENTALS
+           ================================= -->
+
+      <section
+        id="rentals"
+        class="page-section"
+      >
+
+        <div class="page-heading">
+          <h1>Rentals</h1>
+          <p>
+            View and manage current and previous rentals.
+          </p>
+        </div>
 
         <div class="panel">
 
-          <h2>Notifications</h2>
+          <div class="panel-header">
+            <h2>Rental Records</h2>
 
-          <div class="settings-row">
-            <div>
-              <strong>Delivery Reminder</strong>
-              <div class="small">
-                Reminder for upcoming deliveries.
-              </div>
+            <select
+              id="rentalFilter"
+              onchange="renderRentals()"
+              style="width:auto;"
+            >
+              <option value="all">
+                All Rentals
+              </option>
+
+              <option value="active">
+                Active
+              </option>
+
+              <option value="completed">
+                Completed
+              </option>
+
+              <option value="cancelled">
+                Cancelled
+              </option>
+            </select>
+          </div>
+
+          <div id="rentalList"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           INVENTORY
+           ================================= -->
+
+      <section
+        id="inventory"
+        class="page-section"
+      >
+
+        <div class="page-heading">
+          <h1>Dumpster Inventory</h1>
+          <p>
+            Track all six Dumpster Crawl containers.
+          </p>
+        </div>
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h2>Fleet</h2>
+          </div>
+
+          <div
+            id="inventoryGrid"
+            class="inventory-grid"
+          ></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           SCHEDULE
+           ================================= -->
+
+      <section
+        id="schedule"
+        class="page-section"
+      >
+
+        <div class="page-heading">
+          <h1>Delivery & Pickup Schedule</h1>
+          <p>
+            Upcoming deliveries and pickups in date order.
+          </p>
+        </div>
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h2>Schedule</h2>
+          </div>
+
+          <div id="scheduleList"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           CUSTOMERS
+           ================================= -->
+
+      <section
+        id="customers"
+        class="page-section"
+      >
+
+        <div class="page-heading">
+          <h1>Customers</h1>
+          <p>
+            Customer contact information and rental history.
+          </p>
+        </div>
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h2>Customer Records</h2>
+          </div>
+
+          <div id="customerList"></div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           PRICING
+           ================================= -->
+
+      <section
+        id="pricing"
+        class="page-section"
+      >
+
+        <div class="page-heading">
+          <h1>Rental Pricing</h1>
+          <p>
+            Current Dumpster Crawl rental packages.
+          </p>
+        </div>
+
+        <div class="pricing-grid">
+
+          <div class="price-card">
+
+            <h3>20 Yard Dumpsters</h3>
+
+            <div class="price-row">
+              <span>
+                1 Ton • 7 Days
+              </span>
+
+              <span class="price">
+                $389
+              </span>
             </div>
 
+            <div class="price-row">
+              <span>
+                2 Tons • 12 Days
+              </span>
+
+              <span class="price">
+                $469
+              </span>
+            </div>
+
+            <div class="price-row">
+              <span>
+                3 Tons • 12 Days
+              </span>
+
+              <span class="price">
+                $529
+              </span>
+            </div>
+
+          </div>
+
+
+          <div class="price-card">
+
+            <h3>30 Yard Dumpsters</h3>
+
+            <div class="price-row">
+              <span>
+                4 Tons • 12 Days
+              </span>
+
+              <span class="price">
+                $595
+              </span>
+            </div>
+
+            <div class="price-row">
+              <span>
+                5 Tons • 12 Days
+              </span>
+
+              <span class="price">
+                $659
+              </span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- =================================
+           SETTINGS
+           ================================= -->
+
+      <section
+        id="settings"
+        class="page-section"
+      >
+
+        <div class="page-heading">
+          <h1>Settings</h1>
+          <p>
+            Configure software preferences.
+          </p>
+        </div>
+
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h2>Business Information</h2>
+          </div>
+
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Business Name</label>
+
+              <input
+                id="businessName"
+                value="Dumpster Crawl & Dumpster Rentals"
+              >
+            </div>
+
+            <div class="form-group">
+              <label>Business Phone</label>
+
+              <input
+                id="businessPhone"
+                value="262-664-9198"
+              >
+            </div>
+
+          </div>
+
+          <div class="form-group">
+            <label>Website</label>
+
             <input
-              type="checkbox"
-              id="deliveryNotifications"
-              class="toggle"
+              id="businessWebsite"
+              value="www.dumpstercrawl.com"
             >
           </div>
 
-          <div class="settings-row">
-            <div>
-              <strong>Pickup Reminder</strong>
-              <div class="small">
-                Reminder for scheduled pickups.
-              </div>
-            </div>
+        </div>
 
-            <input
-              type="checkbox"
-              id="pickupNotifications"
-              class="toggle"
-            >
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h2>Notifications</h2>
           </div>
 
+
           <div class="settings-row">
+
             <div>
               <strong>Email Notifications</strong>
+
               <div class="small">
-                Enable email notification preference.
+                Save your email notification preference.
               </div>
             </div>
 
@@ -757,18 +1491,28 @@
               id="emailNotifications"
               class="toggle"
             >
+
           </div>
 
+
           <div class="settings-row">
+
             <div>
-                          </div>
+              <strong>Text Notifications</strong>
+
+              <div class="small">
+                Save your text notification preference.
+              </div>
+            </div>
 
             <input
               type="checkbox"
               id="textNotifications"
               class="toggle"
             >
+
           </div>
+
 
           <button
             type="button"
@@ -780,1046 +1524,1067 @@
 
         </div>
 
+
+        <div class="panel">
+
+          <div class="panel-header">
+            <h2>Local Data</h2>
+          </div>
+
+          <p class="small">
+            V3 currently stores test data in this browser.
+            Clearing browser storage will remove that data.
+          </p>
+
+          <button
+            type="button"
+            class="danger-btn"
+            onclick="clearAllData()"
+          >
+            Clear Test Data
+          </button>
+
+        </div>
+
       </section>
 
-    </main>
+    </div>
+
+  </main>
+
+</div>
+
+
+<!-- =====================================
+     RENTAL DETAILS MODAL
+     ===================================== -->
+
+<div
+  id="rentalModal"
+  class="modal"
+>
+
+  <div class="modal-box">
+
+    <div class="modal-top">
+
+      <h2>Rental Details</h2>
+
+      <button
+        class="close-btn"
+        onclick="closeRentalModal()"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div id="rentalModalContent"></div>
 
   </div>
 
-  <script>
+</div>
 
-    /* =========================================
-       DUMPSTER CRAWL RENTAL MANAGEMENT V2
-       ========================================= */
 
-    const dumpsters = [
+<script>
+
+  /* =========================================
+     V3 DATA
+     ========================================= */
+
+  const dumpsters = [
+    {
+      id: "20-01",
+      size: "20 Yard"
+    },
+    {
+      id: "20-02",
+      size: "20 Yard"
+    },
+    {
+      id: "20-03",
+      size: "20 Yard"
+    },
+    {
+      id: "20-04",
+      size: "20 Yard"
+    },
+    {
+      id: "20-05",
+      size: "20 Yard"
+    },
+    {
+      id: "30-01",
+      size: "30 Yard"
+    }
+  ];
+
+
+  const packages = {
+    "20-1": {
+      size: "20 Yard",
+      tons: 1,
+      days: 7,
+      price: 389
+    },
+
+    "20-2": {
+      size: "20 Yard",
+      tons: 2,
+      days: 12,
+      price: 469
+    },
+
+    "20-3": {
+      size: "20 Yard",
+      tons: 3,
+      days: 12,
+      price: 529
+    },
+
+    "30-4": {
+      size: "30 Yard",
+      tons: 4,
+      days: 12,
+      price: 595
+    },
+
+    "30-5": {
+      size: "30 Yard",
+      tons: 5,
+      days: 12,
+      price: 659
+    }
+  };
+
+
+  let rentals =
+    loadJSON(
+      "dumpsterCrawlV3Rentals",
+      []
+    );
+
+
+  let customers =
+    loadJSON(
+      "dumpsterCrawlV3Customers",
+      []
+    );
+
+
+  let settings =
+    loadJSON(
+      "dumpsterCrawlV3Settings",
       {
-        id: "20-01",
-        size: "20 Yard",
-        status: "available"
-      },
-      {
-        id: "20-02",
-        size: "20 Yard",
-        status: "available"
-      },
-      {
-        id: "20-03",
-        size: "20 Yard",
-        status: "available"
-      },
-      {
-        id: "20-04",
-        size: "20 Yard",
-        status: "available"
-      },
-      {
-        id: "20-05",
-        size: "20 Yard",
-        status: "available"
-      },
-      {
-        id: "30-01",
-        size: "30 Yard",
-        status: "available"
-      }
-    ];
-
-
-    /* =========================================
-       LOCAL STORAGE
-       ========================================= */
-
-    let rentals =
-      JSON.parse(
-        localStorage.getItem("dumpsterRentalsV2")
-      ) || [];
-
-    let customers =
-      JSON.parse(
-        localStorage.getItem("dumpsterCustomersV2")
-      ) || [];
-
-    let settings =
-      JSON.parse(
-        localStorage.getItem("dumpsterSettingsV2")
-      ) || {
         emailNotifications: false,
-        textNotifications: false
-      };
+        textNotifications: false,
+        businessName:
+          "Dumpster Crawl & Dumpster Rentals",
+        businessPhone:
+          "262-664-9198",
+        businessWebsite:
+          "www.dumpstercrawl.com"
+      }
+    );
 
 
-    function saveRentals() {
+  /* =========================================
+     STORAGE
+     ========================================= */
 
-      localStorage.setItem(
-        "dumpsterRentalsV2",
-        JSON.stringify(rentals)
-      );
+  function loadJSON(key, fallback) {
 
-    }
+    try {
 
+      const stored =
+        localStorage.getItem(key);
 
-    function saveCustomers() {
-
-      localStorage.setItem(
-        "dumpsterCustomersV2",
-        JSON.stringify(customers)
-      );
-
-    }
-
-
-    function saveSettingsToStorage() {
-
-      localStorage.setItem(
-        "dumpsterSettingsV2",
-        JSON.stringify(settings)
-      );
-
-    }
-
-
-    /* =========================================
-       NAVIGATION
-       ========================================= */
-
-    function showSection(sectionId) {
-
-      const sections =
-        document.querySelectorAll(".page-section");
-
-      sections.forEach(section => {
-        section.classList.remove("active");
-      });
-
-      const selected =
-        document.getElementById(sectionId);
-
-      if (selected) {
-        selected.classList.add("active");
+      if (!stored) {
+        return fallback;
       }
 
+      return JSON.parse(stored);
 
-      const navItems =
-        document.querySelectorAll(".nav-item");
+    } catch (error) {
 
-      navItems.forEach(item => {
-        item.classList.remove("active");
-      });
+      console.error(
+        "Storage error:",
+        error
+      );
+
+      return fallback;
+
+    }
+
+  }
 
 
-      const matchingNav =
-        document.querySelector(
-          `[data-section="${sectionId}"]`
+  function saveRentals() {
+
+    localStorage.setItem(
+      "dumpsterCrawlV3Rentals",
+      JSON.stringify(rentals)
+    );
+
+  }
+
+
+  function saveCustomers() {
+
+    localStorage.setItem(
+      "dumpsterCrawlV3Customers",
+      JSON.stringify(customers)
+    );
+
+  }
+
+
+  function saveSettingsStorage() {
+
+    localStorage.setItem(
+      "dumpsterCrawlV3Settings",
+      JSON.stringify(settings)
+    );
+
+  }
+
+
+  /* =========================================
+     NAVIGATION
+     ========================================= */
+
+  document
+    .querySelectorAll(".nav-item")
+    .forEach(button => {
+
+      button.addEventListener(
+        "click",
+        function() {
+
+          showSection(
+            this.dataset.section
+          );
+
+        }
+      );
+
+    });
+
+
+  function showSection(id) {
+
+    document
+      .querySelectorAll(".page-section")
+      .forEach(section => {
+
+        section.classList.remove(
+          "active"
         );
 
-      if (matchingNav) {
-        matchingNav.classList.add("active");
-      }
+      });
 
 
-      if (sectionId === "dashboard") {
-        renderDashboard();
-      }
+    const section =
+      document.getElementById(id);
 
-      if (sectionId === "rentals") {
-        renderRentals();
-      }
 
-      if (sectionId === "inventory") {
-        renderInventory();
-      }
+    if (section) {
 
-      if (sectionId === "customers") {
-        renderCustomers();
-      }
-
-      if (sectionId === "calendar") {
-        renderCalendar();
-      }
+      section.classList.add(
+        "active"
+      );
 
     }
 
 
     document
       .querySelectorAll(".nav-item")
-      .forEach(item => {
+      .forEach(button => {
 
-        item.addEventListener(
-          "click",
-          function() {
-
-            const section =
-              this.getAttribute("data-section");
-
-            if (section) {
-              showSection(section);
-            }
-
-          }
+        button.classList.toggle(
+          "active",
+          button.dataset.section === id
         );
 
       });
 
 
-    /* =========================================
-       RENTAL STATUS
-       ========================================= */
+    renderAll();
 
-    function getActiveRentals() {
+  }
 
-      return rentals.filter(
-        rental =>
-          rental.status !== "completed" &&
-          rental.status !== "cancelled"
+
+  /* =========================================
+     ACTIVE RENTALS
+     ========================================= */
+
+  function getActiveRentals() {
+
+    return rentals.filter(
+      rental =>
+        rental.status === "active"
+    );
+
+  }
+
+
+  function dumpsterRental(id) {
+
+    return getActiveRentals().find(
+      rental =>
+        rental.dumpster === id
+    );
+
+  }
+
+
+  function dumpsterAvailable(id) {
+
+    return !dumpsterRental(id);
+
+  }
+
+
+  function availableDumpsters() {
+
+    return dumpsters.filter(
+      dumpster =>
+        dumpsterAvailable(
+          dumpster.id
+        )
+    );
+
+  }
+
+
+  /* =========================================
+     DASHBOARD
+     ========================================= */
+
+  function renderDashboard() {
+
+    const active =
+      getActiveRentals();
+
+    const available =
+      availableDumpsters();
+
+
+    setText(
+      "totalDumpsters",
+      dumpsters.length
+    );
+
+
+    setText(
+      "availableDumpsters",
+      available.length
+    );
+
+
+    setText(
+      "activeRentalCount",
+      active.length
+    );
+
+
+    const today =
+      startOfDay(
+        new Date()
       );
 
-    }
+
+    const end =
+      new Date(today);
+
+    end.setDate(
+      end.getDate() + 7
+    );
 
 
-    function dumpsterIsRented(id) {
+    const pickups =
+      active.filter(
+        rental => {
 
-      return getActiveRentals().some(
-        rental =>
-          rental.dumpster === id
-      );
+          const date =
+            parseLocalDate(
+              rental.pickup
+            );
 
-    }
-
-
-    function getAvailableDumpsters() {
-
-      return dumpsters.filter(
-        dumpster =>
-          !dumpsterIsRented(dumpster.id)
-      );
-
-    }
-
-
-    /* =========================================
-       DASHBOARD
-       ========================================= */
-
-    function renderDashboard() {
-
-      const activeRentals =
-        getActiveRentals();
-
-      const available =
-        getAvailableDumpsters();
-
-      const totalElement =
-        document.getElementById(
-          "totalDumpsters"
-        );
-
-      const availableElement =
-        document.getElementById(
-          "availableDumpsters"
-        );
-
-      const activeElement =
-        document.getElementById(
-          "activeRentals"
-        );
-
-      const pickupElement =
-        document.getElementById(
-          "upcomingPickups"
-        );
-
-
-      if (totalElement) {
-        totalElement.textContent =
-          dumpsters.length;
-      }
-
-      if (availableElement) {
-        availableElement.textContent =
-          available.length;
-      }
-
-      if (activeElement) {
-        activeElement.textContent =
-          activeRentals.length;
-      }
-
-
-      if (pickupElement) {
-
-        const today =
-          new Date();
-
-        today.setHours(
-          0,
-          0,
-          0,
-          0
-        );
-
-        const sevenDays =
-          new Date(today);
-
-        sevenDays.setDate(
-          sevenDays.getDate() + 7
-        );
-
-
-        const upcoming =
-          activeRentals.filter(
-            rental => {
-
-              if (!rental.pickup) {
-                return false;
-              }
-
-              const pickup =
-                new Date(
-                  rental.pickup +
-                  "T00:00:00"
-                );
-
-              return (
-                pickup >= today &&
-                pickup <= sevenDays
-              );
-
-            }
+          return (
+            date &&
+            date >= today &&
+            date <= end
           );
 
-
-        pickupElement.textContent =
-          upcoming.length;
-
-      }
+        }
+      );
 
 
-      renderDashboardRentals();
+    setText(
+      "upcomingPickupCount",
+      pickups.length
+    );
 
+
+    renderDashboardInventory();
+
+    renderDashboardRentals();
+
+  }
+
+
+  function renderDashboardInventory() {
+
+    const area =
+      document.getElementById(
+        "dashboardInventory"
+      );
+
+
+    if (!area) {
+      return;
     }
 
 
-    function renderDashboardRentals() {
-
-      const container =
-        document.getElementById(
-          "dashboardRentalList"
-        );
-
-      if (!container) {
-        return;
-      }
-
-
-      const active =
-        getActiveRentals();
-
-
-      if (active.length === 0) {
-
-        container.innerHTML = `
-          <div class="empty-state">
-            No active rentals.
-          </div>
-        `;
-
-        return;
-
-      }
-
-
-      container.innerHTML =
-        active
-          .slice(0, 5)
-          .map(
-            rental => `
-              <div class="rental-card">
-
-                <div>
-                  <strong>
-                    ${escapeHTML(
-                      rental.customer
-                    )}
-                  </strong>
-
-                  <div class="small">
-                    ${escapeHTML(
-                      rental.address
-                    )}
-                  </div>
-                </div>
-
-                <div>
-                  <strong>
-                    ${escapeHTML(
-                      rental.dumpster
-                    )}
-                  </strong>
-
-                  <div class="small">
-                    Pickup:
-                    ${formatDate(
-                      rental.pickup
-                    )}
-                  </div>
-                </div>
-
-              </div>
-            `
-          )
-          .join("");
-
-    }
-
-
-    /* =========================================
-       INVENTORY
-       ========================================= */
-
-    function renderInventory() {
-
-      const inventory =
-        document.getElementById(
-          "inventoryList"
-        ) ||
-        document.getElementById(
-          "inventory"
-        );
-
-
-      if (!inventory) {
-        return;
-      }
-
-
-      inventory.innerHTML = "";
-
-
-      dumpsters.forEach(
+    area.innerHTML =
+      dumpsters.map(
         dumpster => {
 
           const rental =
-            getActiveRentals().find(
-              item =>
-                item.dumpster ===
-                dumpster.id
+            dumpsterRental(
+              dumpster.id
             );
 
 
-          const row =
-            document.createElement(
-              "div"
+          return `
+            <div class="rental-card">
+
+              <div>
+                <strong>
+                  ${dumpster.id}
+                </strong>
+
+                <div class="small">
+                  ${dumpster.size}
+                </div>
+              </div>
+
+              <div>
+                ${
+                  rental
+                    ? escapeHTML(
+                        rental.customer
+                      )
+                    : "Ready for rental"
+                }
+              </div>
+
+              <div>
+                <span class="
+                  status-badge
+                  ${
+                    rental
+                      ? "status-rented"
+                      : "status-available"
+                  }
+                ">
+                  ${
+                    rental
+                      ? "RENTED"
+                      : "AVAILABLE"
+                  }
+                </span>
+              </div>
+
+            </div>
+          `;
+
+        }
+      ).join("");
+
+  }
+
+
+  function renderDashboardRentals() {
+
+    const area =
+      document.getElementById(
+        "dashboardRentals"
+      );
+
+
+    if (!area) {
+      return;
+    }
+
+
+    const active =
+      getActiveRentals();
+
+
+    if (!active.length) {
+
+      area.innerHTML = `
+        <div class="empty-state">
+          No active rentals yet.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    area.innerHTML =
+      active
+        .slice(0, 6)
+        .map(
+          rental => `
+            <div class="rental-card">
+
+              <div>
+                <strong>
+                  ${escapeHTML(
+                    rental.customer
+                  )}
+                </strong>
+
+                <div class="small">
+                  ${escapeHTML(
+                    rental.address
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <strong>
+                  ${escapeHTML(
+                    rental.dumpster
+                  )}
+                </strong>
+
+                <div class="small">
+                  Pickup:
+                  ${formatDate(
+                    rental.pickup
+                  )}
+                </div>
+              </div>
+
+              <button
+                class="secondary-btn small-btn"
+                onclick="
+                  openRentalModal(
+                    '${rental.id}'
+                  )
+                "
+              >
+                View
+              </button>
+
+            </div>
+          `
+        )
+        .join("");
+
+  }
+
+
+  /* =========================================
+     INVENTORY
+     ========================================= */
+
+  function renderInventory() {
+
+    const area =
+      document.getElementById(
+        "inventoryGrid"
+      );
+
+
+    if (!area) {
+      return;
+    }
+
+
+    area.innerHTML =
+      dumpsters.map(
+        dumpster => {
+
+          const rental =
+            dumpsterRental(
+              dumpster.id
             );
 
-          row.className =
-            "inventory-card";
 
+          return `
+            <div class="inventory-card">
 
-          row.innerHTML = `
-            <div>
+              <div class="inventory-card-top">
 
-              <strong>
-                ${dumpster.id}
-              </strong>
+                <div>
+                  <div class="dumpster-id">
+                    ${dumpster.id}
+                  </div>
 
-              <div class="small">
-                ${dumpster.size}
+                  <div class="small">
+                    ${dumpster.size}
+                  </div>
+                </div>
+
+                <span class="
+                  status-badge
+                  ${
+                    rental
+                      ? "status-rented"
+                      : "status-available"
+                  }
+                ">
+                  ${
+                    rental
+                      ? "RENTED"
+                      : "AVAILABLE"
+                  }
+                </span>
+
               </div>
 
               ${
                 rental
                   ? `
-                    <div class="small">
-                      ${escapeHTML(
-                        rental.customer
-                      )}
+                    <div
+                      style="
+                        margin-top:14px;
+                        border-top:1px solid #eee;
+                        padding-top:12px;
+                      "
+                    >
+                      <strong>
+                        ${escapeHTML(
+                          rental.customer
+                        )}
+                      </strong>
+
+                      <div class="small">
+                        ${escapeHTML(
+                          rental.phone
+                        )}
+                      </div>
+
+                      <div class="small">
+                        Pickup:
+                        ${formatDate(
+                          rental.pickup
+                        )}
+                      </div>
                     </div>
                   `
-                  : ""
+                  : `
+                    <div
+                      class="small"
+                      style="margin-top:14px;"
+                    >
+                      Available for a new booking.
+                    </div>
+                  `
               }
 
             </div>
-
-            <span class="
-              status-badge
-              ${
-                rental
-                  ? "status-rented"
-                  : "status-available"
-              }
-            ">
-
-              ${
-                rental
-                  ? "RENTED"
-                  : "AVAILABLE"
-              }
-
-            </span>
           `;
 
+        }
+      ).join("");
 
-          inventory.appendChild(
-            row
+  }
+
+
+  function renderNewRentalInventory() {
+
+    const area =
+      document.getElementById(
+        "newRentalInventory"
+      );
+
+
+    if (!area) {
+      return;
+    }
+
+
+    area.innerHTML =
+      dumpsters.map(
+        dumpster => {
+
+          const available =
+            dumpsterAvailable(
+              dumpster.id
+            );
+
+
+          return `
+            <div class="rental-card">
+
+              <div>
+                <strong>
+                  ${dumpster.id}
+                </strong>
+
+                <div class="small">
+                  ${dumpster.size}
+                </div>
+              </div>
+
+              <div></div>
+
+              <span class="
+                status-badge
+                ${
+                  available
+                    ? "status-available"
+                    : "status-rented"
+                }
+              ">
+                ${
+                  available
+                    ? "AVAILABLE"
+                    : "RENTED"
+                }
+              </span>
+
+            </div>
+          `;
+
+        }
+      ).join("");
+
+  }
+
+
+  function renderDumpsterOptions() {
+
+    const select =
+      document.getElementById(
+        "dumpsterSelect"
+      );
+
+
+    if (!select) {
+      return;
+    }
+
+
+    const current =
+      select.value;
+
+
+    select.innerHTML = `
+      <option value="">
+        Select available dumpster
+      </option>
+    `;
+
+
+    availableDumpsters()
+      .forEach(
+        dumpster => {
+
+          const option =
+            document.createElement(
+              "option"
+            );
+
+          option.value =
+            dumpster.id;
+
+          option.textContent =
+            `${dumpster.id} — ${dumpster.size}`;
+
+          select.appendChild(
+            option
           );
 
         }
       );
 
 
-      renderDumpsterOptions();
+    if (
+      [...select.options]
+        .some(
+          option =>
+            option.value === current
+        )
+    ) {
+
+      select.value =
+        current;
 
     }
 
-
-    function renderDumpsterOptions() {
-
-      const select =
-        document.getElementById(
-          "dumpsterSelect"
-        );
+  }
 
 
-      if (!select) {
-        return;
-      }
+  /* =========================================
+     PACKAGE PRICING
+     ========================================= */
+
+  const packageSelect =
+    document.getElementById(
+      "rentalPackage"
+    );
 
 
-      const previous =
-        select.value;
+  if (packageSelect) {
+
+    packageSelect.addEventListener(
+      "change",
+      function() {
+
+        const selected =
+          packages[this.value];
 
 
-      select.innerHTML = `
-        <option value="">
-          Select available dumpster
-        </option>
-      `;
+        if (!selected) {
+          return;
+        }
 
 
-      getAvailableDumpsters()
-        .forEach(
-          dumpster => {
+        const price =
+          document.getElementById(
+            "price"
+          );
 
-            const option =
-              document.createElement(
-                "option"
+
+        if (price) {
+
+          price.value =
+            selected.price;
+
+        }
+
+
+        const delivery =
+          document.getElementById(
+            "deliveryDate"
+          );
+
+
+        const pickup =
+          document.getElementById(
+            "pickupDate"
+          );
+
+
+        if (
+          delivery &&
+          pickup &&
+          delivery.value
+        ) {
+
+          const date =
+            parseLocalDate(
+              delivery.value
+            );
+
+
+          if (date) {
+
+            date.setDate(
+              date.getDate() +
+              selected.days
+            );
+
+
+            pickup.value =
+              toDateInputValue(
+                date
               );
 
-            option.value =
-              dumpster.id;
-
-            option.textContent =
-              `${dumpster.id} — ${dumpster.size}`;
-
-            select.appendChild(
-              option
-            );
-
           }
-        );
-
-
-      if (
-        [...select.options]
-          .some(
-            option =>
-              option.value === previous
-          )
-      ) {
-        select.value =
-          previous;
-      }
-
-    }
-
-
-    /* =========================================
-       RENTALS
-       ========================================= */
-
-    function renderRentals() {
-
-      const area =
-        document.getElementById(
-          "rentalList"
-        ) ||
-        document.getElementById(
-          "rentalArea"
-        );
-
-
-      if (!area) {
-        return;
-      }
-
-
-      if (rentals.length === 0) {
-
-        area.innerHTML = `
-          <div class="empty-state">
-            No rentals have been created yet.
-          </div>
-        `;
-
-        return;
-
-      }
-
-
-      const sorted =
-        [...rentals].sort(
-          (a, b) =>
-            new Date(b.createdAt) -
-            new Date(a.createdAt)
-        );
-
-
-      area.innerHTML =
-        sorted
-          .map(
-            rental => {
-
-              const completed =
-                rental.status ===
-                "completed";
-
-              const cancelled =
-                rental.status ===
-                "cancelled";
-
-
-              return `
-                <div class="rental-card">
-
-                  <div class="rental-main">
-
-                    <h3>
-                      ${escapeHTML(
-                        rental.customer
-                      )}
-                    </h3>
-
-                    <div class="small">
-                      ${escapeHTML(
-                        rental.phone
-                      )}
-                    </div>
-
-                    <div class="small">
-                      ${escapeHTML(
-                        rental.email || ""
-                      )}
-                    </div>
-
-                    <div class="small">
-                      ${escapeHTML(
-                        rental.address
-                      )}
-                    </div>
-
-                  </div>
-
-
-                  <div class="rental-details">
-
-                    <strong>
-                      ${escapeHTML(
-                        rental.dumpster
-                      )}
-                    </strong>
-
-                    <div class="small">
-                      Delivery:
-                      ${formatDate(
-                        rental.delivery
-                      )}
-                    </div>
-
-                    <div class="small">
-                      Pickup:
-                      ${formatDate(
-                        rental.pickup
-                      )}
-                    </div>
-
-                    <div class="small">
-                      Price:
-                      ${
-                        rental.price
-                          ? formatMoney(
-                              rental.price
-                            )
-                          : "Not entered"
-                      }
-                    </div>
-
-                  </div>
-
-
-                  <div class="rental-actions">
-
-                    ${
-                      !completed &&
-                      !cancelled
-                        ? `
-                          <button
-                            type="button"
-                            class="secondary-btn"
-                            onclick="
-                              completeRental(
-                                '${rental.id}'
-                              )
-                            "
-                          >
-                            Complete
-                          </button>
-
-                          <button
-                            type="button"
-                            class="danger-btn"
-                            onclick="
-                              cancelRental(
-                                '${rental.id}'
-                              )
-                            "
-                          >
-                            Cancel
-                          </button>
-                        `
-                        : `
-                          <span class="
-                            status-badge
-                          ">
-                            ${
-                              completed
-                                ? "COMPLETED"
-                                : "CANCELLED"
-                            }
-                          </span>
-                        `
-                    }
-
-                  </div>
-
-                </div>
-              `;
-
-            }
-          )
-          .join("");
-
-    }
-
-
-    /* =========================================
-       CREATE RENTAL
-       ========================================= */
-
-    const rentalForm =
-      document.getElementById(
-        "rentalForm"
-      );
-
-
-    if (rentalForm) {
-
-      rentalForm.addEventListener(
-        "submit",
-        function(event) {
-
-          event.preventDefault();
-
-
-          const customer =
-            getValue(
-              "customerName"
-            );
-
-          const phone =
-            getValue(
-              "phone"
-            );
-
-          const email =
-            getValue(
-              "email"
-            );
-
-          const address =
-            getValue(
-              "address"
-            );
-
-          const dumpster =
-            getValue(
-              "dumpsterSelect"
-            );
-
-          const delivery =
-            getValue(
-              "deliveryDate"
-            );
-
-          const pickup =
-            getValue(
-              "pickupDate"
-            );
-
-          const price =
-            getValue(
-              "price"
-            );
-
-          const notes =
-            getValue(
-              "notes"
-            );
-
-
-          if (
-            !customer ||
-            !phone ||
-            !address ||
-            !dumpster ||
-            !delivery ||
-            !pickup
-          ) {
-
-            alert(
-              "Please complete all required rental information."
-            );
-
-            return;
-
-          }
-
-
-          if (
-            new Date(
-              pickup +
-              "T00:00:00"
-            ) <
-            new Date(
-              delivery +
-              "T00:00:00"
-            )
-          ) {
-
-            alert(
-              "Pickup date cannot be before the delivery date."
-            );
-
-            return;
-
-          }
-
-
-          if (
-            dumpsterIsRented(
-              dumpster
-            )
-          ) {
-
-            alert(
-              "That dumpster is already assigned to an active rental."
-            );
-
-            renderDumpsterOptions();
-
-            return;
-
-          }
-
-
-          const rental = {
-
-            id:
-              "R-" +
-              Date.now(),
-
-            customer:
-              customer,
-
-            phone:
-              phone,
-
-            email:
-              email,
-
-            address:
-              address,
-
-            dumpster:
-              dumpster,
-
-            delivery:
-              delivery,
-
-            pickup:
-              pickup,
-
-            price:
-              price,
-
-            notes:
-              notes,
-
-            status:
-              "active",
-
-            createdAt:
-              new Date()
-                .toISOString()
-
-          };
-
-
-          rentals.push(
-            rental
-          );
-
-          saveRentals();
-
-
-          addOrUpdateCustomer(
-            rental
-          );
-
-
-          this.reset();
-
-
-          refreshAll();
-
-
-          alert(
-            `Rental created successfully for ${dumpster}.`
-          );
 
         }
-      );
 
-    }
-
-
-    function completeRental(
-      rentalId
-    ) {
-
-      const rental =
-        rentals.find(
-          item =>
-            item.id ===
-            rentalId
-        );
-
-
-      if (!rental) {
-        return;
       }
+    );
+
+  }
 
 
-      rental.status =
-        "completed";
+  /* =========================================
+     CREATE RENTAL
+     ========================================= */
 
-      rental.completedAt =
-        new Date()
-          .toISOString();
-
-
-      saveRentals();
-
-      refreshAll();
-
-    }
+  const rentalForm =
+    document.getElementById(
+      "rentalForm"
+    );
 
 
-    function cancelRental(
-      rentalId
-    ) {
+  if (rentalForm) {
 
-      const rental =
-        rentals.find(
-          item =>
-            item.id ===
-            rentalId
-        );
+    rentalForm.addEventListener(
+      "submit",
+      function(event) {
+
+        event.preventDefault();
 
 
-      if (!rental) {
-        return;
-      }
+        const customer =
+          valueOf(
+            "customerName"
+          );
+
+        const phone =
+          valueOf(
+            "phone"
+          );
+
+        const email =
+          valueOf(
+            "email"
+          );
+
+        const address =
+          valueOf(
+            "address"
+          );
+
+        const dumpster =
+          valueOf(
+            "dumpsterSelect"
+          );
+
+        const packageId =
+          valueOf(
+            "rentalPackage"
+          );
+
+        const delivery =
+          valueOf(
+            "deliveryDate"
+          );
+
+        const pickup =
+          valueOf(
+            "pickupDate"
+          );
+
+        const price =
+          valueOf(
+            "price"
+          );
+
+        const paymentStatus =
+          valueOf(
+            "paymentStatus"
+          );
+
+        const placement =
+          valueOf(
+            "placement"
+          );
+
+        const notes =
+          valueOf(
+            "notes"
+          );
 
 
-      const confirmed =
-        confirm(
-          "Cancel this rental?"
-        );
+        if (
+          !customer ||
+          !phone ||
+          !address ||
+          !dumpster ||
+          !delivery ||
+          !pickup
+        ) {
+
+          alert(
+            "Please complete all required fields."
+          );
+
+          return;
+
+        }
 
 
-      if (!confirmed) {
-        return;
-      }
+        if (
+          !dumpsterAvailable(
+            dumpster
+          )
+        ) {
+
+          alert(
+            "That dumpster is already assigned to another active rental."
+          );
+
+          renderDumpsterOptions();
+
+          return;
+
+        }
 
 
-      rental.status =
-        "cancelled";
-
-      rental.cancelledAt =
-        new Date()
-          .toISOString();
+        const deliveryDate =
+          parseLocalDate(
+            delivery
+          );
 
 
-      saveRentals();
-
-      refreshAll();
-
-    }
-
-
-    /* =========================================
-       CUSTOMERS
-       ========================================= */
-
-    function addOrUpdateCustomer(
-      rental
-    ) {
-
-      let customer =
-        customers.find(
-          item =>
-            normalizePhone(
-              item.phone
-            ) ===
-            normalizePhone(
-              rental.phone
-            )
-        );
+        const pickupDate =
+          parseLocalDate(
+            pickup
+          );
 
 
-      if (!customer) {
+        if (
+          !deliveryDate ||
+          !pickupDate
+        ) {
 
-        customer = {
+          alert(
+            "Please enter valid delivery and pickup dates."
+          );
+
+          return;
+
+        }
+
+
+        if (
+          pickupDate <
+          deliveryDate
+        ) {
+
+          alert(
+            "Pickup date cannot be before the delivery date."
+          );
+
+          return;
+
+        }
+
+
+        const rental = {
 
           id:
-            "C-" +
-            Date.now(),
+            createId("R"),
 
-          name:
-            rental.customer,
+          customer,
+          phone,
+          email,
+          address,
+          dumpster,
+          packageId,
+          delivery,
+          pickup,
+          price,
+          paymentStatus,
+          placement,
+          notes,
 
-          phone:
-            rental.phone,
-
-          email:
-            rental.email,
-
-          address:
-            rental.address,
-
-          rentalCount:
-            1,
+          status:
+            "active",
 
           createdAt:
             new Date()
@@ -1828,201 +2593,1017 @@
         };
 
 
-        customers.push(
-          customer
+        rentals.push(
+          rental
         );
 
-      } else {
 
-        customer.name =
-          rental.customer;
+        saveRentals();
 
-        customer.email =
-          rental.email;
+        addCustomerFromRental(
+          rental
+        );
 
-        customer.address =
-          rental.address;
 
-        customer.rentalCount =
-          (customer.rentalCount || 0) +
-          1;
+        rentalForm.reset();
+
+
+        renderAll();
+
+
+        showSection(
+          "rentals"
+        );
+
+
+        alert(
+          `Rental created successfully for ${dumpster}.`
+        );
 
       }
+    );
+
+  }
 
 
-      saveCustomers();
+  /* =========================================
+     RENTALS
+     ========================================= */
+
+  function renderRentals() {
+
+    const area =
+      document.getElementById(
+        "rentalList"
+      );
+
+
+    if (!area) {
+      return;
+    }
+
+
+    const filter =
+      valueOf(
+        "rentalFilter"
+      ) || "all";
+
+
+    let list =
+      [...rentals];
+
+
+    if (
+      filter !== "all"
+    ) {
+
+      list =
+        list.filter(
+          rental =>
+            rental.status === filter
+        );
 
     }
 
 
-    function renderCustomers() {
-
-      const area =
-        document.getElementById(
-          "customerList"
-        );
-
-
-      if (!area) {
-        return;
-      }
+    list.sort(
+      (a, b) =>
+        new Date(
+          b.createdAt
+        ) -
+        new Date(
+          a.createdAt
+        )
+    );
 
 
-      if (
-        customers.length === 0
-      ) {
+    if (!list.length) {
 
-        area.innerHTML = `
-          <div class="empty-state">
-            No customers yet.
-          </div>
-        `;
+      area.innerHTML = `
+        <div class="empty-state">
+          No rentals found.
+        </div>
+      `;
 
-        return;
+      return;
 
-      }
+    }
 
 
-      area.innerHTML =
-        customers
-          .map(
-            customer => `
-              <div class="customer-card">
+    area.innerHTML =
+      list.map(
+        rental => {
 
-                <div>
-                  <strong>
-                    ${escapeHTML(
-                      customer.name
-                    )}
-                  </strong>
+          return `
+            <div class="rental-card">
 
-                  <div class="small">
-                    ${escapeHTML(
-                      customer.phone
-                    )}
-                  </div>
+              <div>
 
-                  <div class="small">
-                    ${escapeHTML(
-                      customer.email || ""
-                    )}
-                  </div>
+                <h3>
+                  ${escapeHTML(
+                    rental.customer
+                  )}
+                </h3>
 
-                  <div class="small">
-                    ${escapeHTML(
-                      customer.address || ""
-                    )}
-                  </div>
+                <div class="small">
+                  ${escapeHTML(
+                    rental.phone
+                  )}
                 </div>
 
-                <div>
-                  <strong>
-                    ${
-                      customer.rentalCount ||
-                      0
-                    }
-                  </strong>
+                <div class="small">
+                  ${escapeHTML(
+                    rental.address
+                  )}
+                </div>
 
-                  <div class="small">
-                    Rentals
-                  </div>
+                <div class="small">
+                  Payment:
+                  ${escapeHTML(
+                    rental.paymentStatus ||
+                    "Unpaid"
+                  )}
                 </div>
 
               </div>
-            `
-          )
-          .join("");
+
+
+              <div>
+
+                <strong>
+                  ${escapeHTML(
+                    rental.dumpster
+                  )}
+                </strong>
+
+                <div class="small">
+                  Delivery:
+                  ${formatDate(
+                    rental.delivery
+                  )}
+                </div>
+
+                <div class="small">
+                  Pickup:
+                  ${formatDate(
+                    rental.pickup
+                  )}
+                </div>
+
+                <div class="small">
+                  ${
+                    rental.price
+                      ? formatMoney(
+                          rental.price
+                        )
+                      : "Price not entered"
+                  }
+                </div>
+
+                <div style="margin-top:7px;">
+
+                  <span class="
+                    status-badge
+                    ${
+                      rental.status ===
+                      "active"
+                        ? "status-rented"
+                        : rental.status ===
+                          "completed"
+                          ? "status-completed"
+                          : "status-cancelled"
+                    }
+                  ">
+
+                    ${rental.status.toUpperCase()}
+
+                  </span>
+
+                </div>
+
+              </div>
+
+
+              <div class="rental-actions">
+
+                <button
+                  class="secondary-btn small-btn"
+                  onclick="
+                    openRentalModal(
+                      '${rental.id}'
+                    )
+                  "
+                >
+                  View
+                </button>
+
+                ${
+                  rental.status ===
+                  "active"
+                    ? `
+                      <button
+                        class="primary-btn small-btn"
+                        onclick="
+                          completeRental(
+                            '${rental.id}'
+                          )
+                        "
+                      >
+                        Complete
+                      </button>
+
+                      <button
+                        class="danger-btn small-btn"
+                        onclick="
+                          cancelRental(
+                            '${rental.id}'
+                          )
+                        "
+                      >
+                        Cancel
+                      </button>
+                    `
+                    : ""
+                }
+
+              </div>
+
+            </div>
+          `;
+
+        }
+      ).join("");
+
+  }
+
+
+  function completeRental(id) {
+
+    const rental =
+      rentals.find(
+        rental =>
+          rental.id === id
+      );
+
+
+    if (!rental) {
+      return;
+    }
+
+
+    const confirmed =
+      confirm(
+        `Mark ${rental.dumpster} rental for ${rental.customer} as completed?`
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    rental.status =
+      "completed";
+
+    rental.completedAt =
+      new Date()
+        .toISOString();
+
+
+    saveRentals();
+
+    renderAll();
+
+  }
+
+
+  function cancelRental(id) {
+
+    const rental =
+      rentals.find(
+        rental =>
+          rental.id === id
+      );
+
+
+    if (!rental) {
+      return;
+    }
+
+
+    const confirmed =
+      confirm(
+        `Cancel the rental for ${rental.customer}?`
+      );
+
+
+    if (!confirmed) {
+      return;
+    }
+
+
+    rental.status =
+      "cancelled";
+
+    rental.cancelledAt =
+      new Date()
+        .toISOString();
+
+
+    saveRentals();
+
+    renderAll();
+
+  }
+
+
+  /* =========================================
+     RENTAL DETAILS
+     ========================================= */
+
+  function openRentalModal(id) {
+
+    const rental =
+      rentals.find(
+        rental =>
+          rental.id === id
+      );
+
+
+    if (!rental) {
+      return;
+    }
+
+
+    const modal =
+      document.getElementById(
+        "rentalModal"
+      );
+
+
+    const content =
+      document.getElementById(
+        "rentalModalContent"
+      );
+
+
+    content.innerHTML = `
+
+      <div class="form-group">
+        <label>Customer</label>
+        <div>
+          ${escapeHTML(
+            rental.customer
+          )}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Phone</label>
+        <div>
+          ${escapeHTML(
+            rental.phone
+          )}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Email</label>
+        <div>
+          ${escapeHTML(
+            rental.email ||
+            "Not provided"
+          )}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Address</label>
+        <div>
+          ${escapeHTML(
+            rental.address
+          )}
+        </div>
+      </div>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Dumpster</label>
+          <div>
+            ${escapeHTML(
+              rental.dumpster
+            )}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Status</label>
+          <div>
+            ${escapeHTML(
+              rental.status
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-grid">
+
+        <div class="form-group">
+          <label>Delivery</label>
+          <div>
+            ${formatDate(
+              rental.delivery
+            )}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Pickup</label>
+          <div>
+            ${formatDate(
+              rental.pickup
+            )}
+          </div>
+        </div>
+
+      </div>
+
+      <div class="form-group">
+        <label>Rental Price</label>
+        <div>
+          ${
+            rental.price
+              ? formatMoney(
+                  rental.price
+                )
+              : "Not entered"
+          }
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Payment Status</label>
+        <div>
+          ${escapeHTML(
+            rental.paymentStatus ||
+            "Unpaid"
+          )}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Placement Instructions</label>
+        <div>
+          ${escapeHTML(
+            rental.placement ||
+            "None"
+          )}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Notes</label>
+        <div>
+          ${escapeHTML(
+            rental.notes ||
+            "None"
+          )}
+        </div>
+      </div>
+
+    `;
+
+
+    modal.classList.add(
+      "open"
+    );
+
+  }
+
+
+  function closeRentalModal() {
+
+    document
+      .getElementById(
+        "rentalModal"
+      )
+      .classList.remove(
+        "open"
+      );
+
+  }
+
+
+  document
+    .getElementById(
+      "rentalModal"
+    )
+    .addEventListener(
+      "click",
+      function(event) {
+
+        if (
+          event.target === this
+        ) {
+
+          closeRentalModal();
+
+        }
+
+      }
+    );
+
+
+  /* =========================================
+     CUSTOMERS
+     ========================================= */
+
+  function addCustomerFromRental(
+    rental
+  ) {
+
+    const phoneKey =
+      normalizePhone(
+        rental.phone
+      );
+
+
+    let customer =
+      customers.find(
+        customer =>
+          normalizePhone(
+            customer.phone
+          ) === phoneKey
+      );
+
+
+    if (!customer) {
+
+      customer = {
+
+        id:
+          createId("C"),
+
+        name:
+          rental.customer,
+
+        phone:
+          rental.phone,
+
+        email:
+          rental.email,
+
+        address:
+          rental.address,
+
+        rentalCount:
+          1,
+
+        createdAt:
+          new Date()
+            .toISOString()
+
+      };
+
+
+      customers.push(
+        customer
+      );
+
+    } else {
+
+      customer.name =
+        rental.customer;
+
+      customer.email =
+        rental.email;
+
+      customer.address =
+        rental.address;
+
+      customer.rentalCount =
+        (customer.rentalCount || 0) +
+        1;
 
     }
 
 
-    /* =========================================
-       CALENDAR / SCHEDULE
-       ========================================= */
+    saveCustomers();
 
-    function renderCalendar() {
-
-      const area =
-        document.getElementById(
-          "calendarList"
-        );
+  }
 
 
-      if (!area) {
+  function renderCustomers() {
+
+    const area =
+      document.getElementById(
+        "customerList"
+      );
+
+
+    if (!area) {
+      return;
+    }
+
+
+    if (!customers.length) {
+
+      area.innerHTML = `
+        <div class="empty-state">
+          Customers will appear here after you create rentals.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    area.innerHTML =
+      customers.map(
+        customer => `
+          <div class="customer-card">
+
+            <div>
+
+              <strong>
+                ${escapeHTML(
+                  customer.name
+                )}
+              </strong>
+
+              <div class="small">
+                ${escapeHTML(
+                  customer.phone
+                )}
+              </div>
+
+              <div class="small">
+                ${escapeHTML(
+                  customer.email || ""
+                )}
+              </div>
+
+              <div class="small">
+                ${escapeHTML(
+                  customer.address || ""
+                )}
+              </div>
+
+            </div>
+
+            <div>
+
+              <strong>
+                ${customer.rentalCount || 0}
+              </strong>
+
+              <div class="small">
+                Total Rentals
+              </div>
+
+            </div>
+
+          </div>
+        `
+      ).join("");
+
+  }
+
+
+  /* =========================================
+     DELIVERY & PICKUP SCHEDULE
+     ========================================= */
+
+  function renderSchedule() {
+
+    const area =
+      document.getElementById(
+        "scheduleList"
+      );
+
+
+    if (!area) {
+      return;
+    }
+
+
+    const events = [];
+
+
+    getActiveRentals()
+      .forEach(
+        rental => {
+
+          events.push({
+
+            date:
+              rental.delivery,
+
+            type:
+              "Delivery",
+
+            customer:
+              rental.customer,
+
+            dumpster:
+              rental.dumpster,
+
+            address:
+              rental.address
+
+          });
+
+
+          events.push({
+
+            date:
+              rental.pickup,
+
+            type:
+              "Pickup",
+
+            customer:
+              rental.customer,
+
+            dumpster:
+              rental.dumpster,
+
+            address:
+              rental.address
+
+          });
+
+        }
+      );
+
+
+    events.sort(
+      (a, b) => {
+
+        const first =
+          parseLocalDate(
+            a.date
+          );
+
+        const second =
+          parseLocalDate(
+            b.date
+          );
+
+
+        return first - second;
+
+      }
+    );
+
+
+    if (!events.length) {
+
+      area.innerHTML = `
+        <div class="empty-state">
+          No deliveries or pickups are currently scheduled.
+        </div>
+      `;
+
+      return;
+
+    }
+
+
+    area.innerHTML =
+      events.map(
+        event => `
+          <div class="schedule-card">
+
+            <div>
+              <strong>
+                ${formatDate(
+                  event.date
+                )}
+              </strong>
+            </div>
+
+            <div
+              class="
+                schedule-type
+                ${
+                  event.type ===
+                  "Delivery"
+                    ? "delivery"
+                    : "pickup"
+                }
+              "
+            >
+              ${event.type}
+            </div>
+
+            <div>
+
+              <strong>
+                ${escapeHTML(
+                  event.customer
+                )}
+              </strong>
+
+              <div class="small">
+                ${escapeHTML(
+                  event.dumpster
+                )}
+                •
+                ${escapeHTML(
+                  event.address
+                )}
+              </div>
+
+            </div>
+
+          </div>
+        `
+      ).join("");
+
+  }
+
+
+  /* =========================================
+     SETTINGS
+     ========================================= */
+
+  function loadSettingsIntoForm() {
+
+    const email =
+      document.getElementById(
+        "emailNotifications"
+      );
+
+
+    const text =
+      document.getElementById(
+        "textNotifications"
+      );
+
+
+    const name =
+      document.getElementById(
+        "businessName"
+      );
+
+
+    const phone =
+      document.getElementById(
+        "businessPhone"
+      );
+
+
+    const website =
+      document.getElementById(
+        "businessWebsite"
+      );
+
+
+    email.checked =
+      Boolean(
+        settings.emailNotifications
+      );
+
+
+    text.checked =
+      Boolean(
+        settings.textNotifications
+      );
+
+
+    name.value =
+      settings.businessName ||
+      "Dumpster Crawl & Dumpster Rentals";
+
+
+    phone.value =
+      settings.businessPhone ||
+      "262-664-9198";
+
+
+    website.value =
+      settings.businessWebsite ||
+      "www.dumpstercrawl.com";
+
+  }
+
+
+  function saveSettings() {
+
+    settings = {
+
+      emailNotifications:
+        document
+          .getElementById(
+            "emailNotifications"
+          )
+          .checked,
+
+      textNotifications:
+        document
+          .getElementById(
+            "textNotifications"
+          )
+          .checked,
+
+      businessName:
+        valueOf(
+          "businessName"
+        ),
+
+      businessPhone:
+        valueOf(
+          "businessPhone"
+        ),
+
+      businessWebsite:
+        valueOf(
+          "businessWebsite"
+        )
+
+    };
+
+
+    saveSettingsStorage();
+
+
+    alert(
+      "Settings saved."
+    );
+
+  }
+
+
+  /* =========================================
+     SEARCH
+     ========================================= */
+
+  const globalSearch =
+    document.getElementById(
+      "globalSearch"
+    );
+
+
+  globalSearch.addEventListener(
+    "input",
+    function() {
+
+      const query =
+        this.value
+          .trim()
+          .toLowerCase();
+
+
+      if (!query) {
+
+        renderAll();
+
         return;
+
       }
 
 
-      const events = [];
+      showSection(
+        "rentals"
+      );
 
 
-      getActiveRentals()
-        .forEach(
+      const matches =
+        rentals.filter(
           rental => {
 
-            events.push({
-
-              date:
-                rental.delivery,
-
-              type:
-                "Delivery",
-
-              customer:
-                rental.customer,
-
-              dumpster:
-                rental.dumpster,
-
-              address:
-                rental.address
-
-            });
+            const text = `
+              ${rental.customer}
+              ${rental.phone}
+              ${rental.email}
+              ${rental.address}
+              ${rental.dumpster}
+            `.toLowerCase();
 
 
-            events.push({
-
-              date:
-                rental.pickup,
-
-              type:
-                "Pickup",
-
-              customer:
-                rental.customer,
-
-              dumpster:
-                rental.dumpster,
-
-              address:
-                rental.address
-
-            });
+            return text.includes(
+              query
+            );
 
           }
         );
 
 
-      events.sort(
-        (a, b) =>
-          new Date(
-            a.date +
-            "T00:00:00"
-          ) -
-          new Date(
-            b.date +
-            "T00:00:00"
-          )
-      );
+      const area =
+        document.getElementById(
+          "rentalList"
+        );
 
 
-      if (
-        events.length === 0
-      ) {
+      if (!matches.length) {
 
         area.innerHTML = `
           <div class="empty-state">
-            No scheduled deliveries or pickups.
+            No matching rentals found.
           </div>
         `;
 
@@ -2032,414 +3613,389 @@
 
 
       area.innerHTML =
-        events
-          .map(
-            event => `
-              <div class="calendar-card">
+        matches.map(
+          rental => `
+            <div class="rental-card">
 
-                <div>
-                  <strong>
-                    ${formatDate(
-                      event.date
-                    )}
-                  </strong>
+              <div>
 
-                  <div class="small">
-                    ${event.type}
-                  </div>
+                <strong>
+                  ${escapeHTML(
+                    rental.customer
+                  )}
+                </strong>
+
+                <div class="small">
+                  ${escapeHTML(
+                    rental.phone
+                  )}
                 </div>
 
-                <div>
-                  <strong>
-                    ${escapeHTML(
-                      event.customer
-                    )}
-                  </strong>
-
-                  <div class="small">
-                    ${escapeHTML(
-                      event.dumpster
-                    )}
-                    •
-                    ${escapeHTML(
-                      event.address
-                    )}
-                  </div>
+                <div class="small">
+                  ${escapeHTML(
+                    rental.address
+                  )}
                 </div>
 
               </div>
-            `
-          )
-          .join("");
 
-    }
+              <div>
 
+                <strong>
+                  ${escapeHTML(
+                    rental.dumpster
+                  )}
+                </strong>
 
-    /* =========================================
-       SETTINGS
-       ========================================= */
-
-    function loadSettings() {
-
-      const email =
-        document.getElementById(
-          "emailNotifications"
-        );
-
-      const text =
-        document.getElementById(
-          "textNotifications"
-        );
-
-
-      if (email) {
-
-        email.checked =
-          Boolean(
-            settings.emailNotifications
-          );
-
-      }
-
-
-      if (text) {
-
-        text.checked =
-          Boolean(
-            settings.textNotifications
-          );
-
-      }
-
-    }
-
-
-    function saveSettings() {
-
-      const email =
-        document.getElementById(
-          "emailNotifications"
-        );
-
-      const text =
-        document.getElementById(
-          "textNotifications"
-        );
-
-
-      settings.emailNotifications =
-        email
-          ? email.checked
-          : false;
-
-
-      settings.textNotifications =
-        text
-          ? text.checked
-          : false;
-
-
-      saveSettingsToStorage();
-
-
-      alert(
-        "Settings saved."
-      );
-
-    }
-
-
-    /* =========================================
-       SEARCH
-       ========================================= */
-
-    const searchInput =
-      document.getElementById(
-        "globalSearch"
-      );
-
-
-    if (searchInput) {
-
-      searchInput.addEventListener(
-        "input",
-        function() {
-
-          const query =
-            this.value
-              .trim()
-              .toLowerCase();
-
-
-          if (!query) {
-
-            renderRentals();
-            renderCustomers();
-
-            return;
-
-          }
-
-
-          const rentalArea =
-            document.getElementById(
-              "rentalList"
-            ) ||
-            document.getElementById(
-              "rentalArea"
-            );
-
-
-          if (rentalArea) {
-
-            const matches =
-              rentals.filter(
-                rental => {
-
-                  const haystack = `
-                    ${rental.customer}
-                    ${rental.phone}
-                    ${rental.email}
-                    ${rental.address}
-                    ${rental.dumpster}
-                  `.toLowerCase();
-
-
-                  return haystack.includes(
-                    query
-                  );
-
-                }
-              );
-
-
-            if (
-              matches.length === 0
-            ) {
-
-              rentalArea.innerHTML = `
-                <div class="empty-state">
-                  No matching rentals.
+                <div class="small">
+                  ${formatDate(
+                    rental.delivery
+                  )}
+                  →
+                  ${formatDate(
+                    rental.pickup
+                  )}
                 </div>
-              `;
 
-            } else {
+              </div>
 
-              rentalArea.innerHTML =
-                matches
-                  .map(
-                    rental => `
-                      <div class="rental-card">
-
-                        <div>
-                          <strong>
-                            ${escapeHTML(
-                              rental.customer
-                            )}
-                          </strong>
-
-                          <div class="small">
-                            ${escapeHTML(
-                              rental.phone
-                            )}
-                          </div>
-
-                          <div class="small">
-                            ${escapeHTML(
-                              rental.address
-                            )}
-                          </div>
-                        </div>
-
-                        <div>
-                          <strong>
-                            ${escapeHTML(
-                              rental.dumpster
-                            )}
-                          </strong>
-
-                          <div class="small">
-                            ${formatDate(
-                              rental.delivery
-                            )}
-                            →
-                            ${formatDate(
-                              rental.pickup
-                            )}
-                          </div>
-                        </div>
-
-                      </div>
-                    `
+              <button
+                class="secondary-btn small-btn"
+                onclick="
+                  openRentalModal(
+                    '${rental.id}'
                   )
-                  .join("");
+                "
+              >
+                View
+              </button>
 
-            }
+            </div>
+          `
+        ).join("");
 
-          }
+    }
+  );
 
-        }
+
+  /* =========================================
+     CLEAR TEST DATA
+     ========================================= */
+
+  function clearAllData() {
+
+    const confirmed =
+      confirm(
+        "This will permanently clear all V3 test rentals and customers stored in this browser. Continue?"
       );
 
+
+    if (!confirmed) {
+      return;
     }
 
 
-    /* =========================================
-       HELPERS
-       ========================================= */
+    localStorage.removeItem(
+      "dumpsterCrawlV3Rentals"
+    );
 
-    function getValue(id) {
 
-      const element =
-        document.getElementById(
-          id
-        );
+    localStorage.removeItem(
+      "dumpsterCrawlV3Customers"
+    );
 
-      return element
-        ? element.value.trim()
-        : "";
 
+    rentals = [];
+
+    customers = [];
+
+
+    renderAll();
+
+
+    alert(
+      "V3 test rental and customer data cleared."
+    );
+
+  }
+
+
+  /* =========================================
+     HELPERS
+     ========================================= */
+
+  function valueOf(id) {
+
+    const element =
+      document.getElementById(id);
+
+
+    if (!element) {
+      return "";
     }
 
 
-    function normalizePhone(
-      phone
-    ) {
+    return String(
+      element.value || ""
+    ).trim();
 
-      return String(
-        phone || ""
-      ).replace(
-        /\D/g,
-        ""
+  }
+
+
+  function setText(
+    id,
+    value
+  ) {
+
+    const element =
+      document.getElementById(id);
+
+
+    if (element) {
+
+      element.textContent =
+        value;
+
+    }
+
+  }
+
+
+  function normalizePhone(
+    phone
+  ) {
+
+    return String(
+      phone || ""
+    ).replace(
+      /\D/g,
+      ""
+    );
+
+  }
+
+
+  function createId(prefix) {
+
+    return (
+      prefix +
+      "-" +
+      Date.now() +
+      "-" +
+      Math.random()
+        .toString(36)
+        .slice(2, 7)
+    );
+
+  }
+
+
+  function parseLocalDate(
+    value
+  ) {
+
+    if (!value) {
+      return null;
+    }
+
+
+    const date =
+      new Date(
+        value +
+        "T00:00:00"
       );
 
-    }
 
-
-    function formatDate(
-      value
-    ) {
-
-      if (!value) {
-        return "—";
-      }
-
-
-      const date =
-        new Date(
-          value +
-          "T00:00:00"
-        );
-
-
-      if (
-        Number.isNaN(
-          date.getTime()
-        )
-      ) {
-
-        return value;
-
-      }
-
-
-      return date.toLocaleDateString(
-        "en-US",
-        {
-          month: "short",
-          day: "numeric",
-          year: "numeric"
-        }
-      );
-
-    }
-
-
-    function formatMoney(
-      value
-    ) {
-
-      const number =
-        Number(value);
-
-
-      if (
-        Number.isNaN(number)
-      ) {
-
-        return "$0.00";
-
-      }
-
-
-      return number.toLocaleString(
-        "en-US",
-        {
-          style: "currency",
-          currency: "USD"
-        }
-      );
-
-    }
-
-
-    function escapeHTML(
-      value
-    ) {
-
-      return String(
-        value || ""
+    if (
+      Number.isNaN(
+        date.getTime()
       )
-        .replace(
-          /&/g,
-          "&amp;"
-        )
-        .replace(
-          /</g,
-          "&lt;"
-        )
-        .replace(
-          />/g,
-          "&gt;"
-        )
-        .replace(
-          /"/g,
-          "&quot;"
-        )
-        .replace(
-          /'/g,
-          "&#039;"
-        );
+    ) {
+
+      return null;
 
     }
 
 
-    /* =========================================
-       REFRESH EVERYTHING
-       ========================================= */
+    return date;
 
-    function refreshAll() {
+  }
 
-      renderDashboard();
-      renderInventory();
-      renderRentals();
-      renderCustomers();
-      renderCalendar();
-      renderDumpsterOptions();
+
+  function startOfDay(date) {
+
+    const result =
+      new Date(date);
+
+
+    result.setHours(
+      0,
+      0,
+      0,
+      0
+    );
+
+
+    return result;
+
+  }
+
+
+  function toDateInputValue(
+    date
+  ) {
+
+    const year =
+      date.getFullYear();
+
+
+    const month =
+      String(
+        date.getMonth() + 1
+      ).padStart(
+        2,
+        "0"
+      );
+
+
+    const day =
+      String(
+        date.getDate()
+      ).padStart(
+        2,
+        "0"
+      );
+
+
+    return (
+      year +
+      "-" +
+      month +
+      "-" +
+      day
+    );
+
+  }
+
+
+  function formatDate(
+    value
+  ) {
+
+    const date =
+      parseLocalDate(
+        value
+      );
+
+
+    if (!date) {
+      return "—";
+    }
+
+
+    return date.toLocaleDateString(
+      "en-US",
+      {
+        month: "short",
+        day: "numeric",
+        year: "numeric"
+      }
+    );
+
+  }
+
+
+  function formatMoney(
+    value
+  ) {
+
+    const amount =
+      Number(value);
+
+
+    if (
+      Number.isNaN(amount)
+    ) {
+
+      return "$0.00";
 
     }
 
 
-    /* =========================================
-       START APPLICATION
-       ========================================= */
+    return amount.toLocaleString(
+      "en-US",
+      {
+        style: "currency",
+        currency: "USD"
+      }
+    );
 
-    loadSettings();
+  }
 
-    refreshAll();
 
-  </script>
+  function escapeHTML(
+    value
+  ) {
+
+    return String(
+      value || ""
+    )
+      .replace(
+        /&/g,
+        "&amp;"
+      )
+      .replace(
+        /</g,
+        "&lt;"
+      )
+      .replace(
+        />/g,
+        "&gt;"
+      )
+      .replace(
+        /"/g,
+        "&quot;"
+      )
+      .replace(
+        /'/g,
+        "&#039;"
+      );
+
+  }
+
+
+  /* =========================================
+     RENDER EVERYTHING
+     ========================================= */
+
+  function renderAll() {
+
+    renderDashboard();
+
+    renderInventory();
+
+    renderNewRentalInventory();
+
+    renderDumpsterOptions();
+
+    renderRentals();
+
+    renderCustomers();
+
+    renderSchedule();
+
+  }
+
+
+  /* =========================================
+     START V3
+     ========================================= */
+
+  loadSettingsIntoForm();
+
+  renderAll();
+
+</script>
 
 </body>
 </html>
-             
