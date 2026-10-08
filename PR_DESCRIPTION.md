@@ -1,0 +1,11 @@
+# Preserve V4 photo IDs and signed agreements in protected central storage
+
+V4 previously saved a photo ID filename and a received flag without uploading the file, while rental/customer/agreement records lived only in the browser. This change uploads actual bytes into private R2 storage, associates each object with a server-generated rental UUID in D1, and preserves the signature, server acceptance timestamp, versioned agreement snapshot and evidence hashes. Creation succeeds only after persistence completes.
+
+All management records and downloads require an expiring, revocable staff session. Upload validation runs server-side; mutations enforce same-origin requests; document responses prohibit caching and inline rendering. Audits record document access and state changes. Conditional inventory allocation prevents overlapping unit assignments. V4 is staff-only; customer self-service remains the separate hosted booking app.
+
+Validation: eight Node tests pass against real SQLite transactions and a byte-preserving R2 adapter. Coverage includes upload/download, rental association, immutable agreement evidence, malformed/oversize uploads, storage failures, anonymous/forged/expired sessions, logout, CSRF, login throttling and inventory capacity. Build, inline-script and worker syntax checks and git diff --check pass. These are local tests, not live Cloudflare upload tests.
+
+Deployment prerequisites: provision a private bucket and D1 database, apply the migration, configure a staff secret and same-origin HTTPS Worker. GitHub Pages cannot run this API and fails closed. No deployment, production migration or hosted-app modification is included. Existing browser-local records are preserved in their original browser; missing document bytes cannot be recovered from filenames. Current staff authentication is a shared owner credential; multi-staff access should use named identities and MFA.
+
+Hosted version 37 source already uploads IDs, links them to bookings, saves signatures/acceptance and checks owner authentication before retrieval. Remaining issues include non-expiring server-side owner token, MIME-only validation and payment preceding storage. Authenticated live retrieval and bucket configuration remain unverified. See SECURITY-STORAGE.md for the exact evidence and limits.

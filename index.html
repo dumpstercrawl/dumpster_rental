@@ -551,6 +551,14 @@ textarea {
 </head>
 
 <body>
+<div style="padding:16px;background:#fff;border-bottom:2px solid #ffd400">
+<strong id="secureStatus" role="status">Connecting to secure storage…</strong>
+<label for="staffPassword">Staff password</label>
+<input id="staffPassword" type="password" autocomplete="current-password">
+<button type="button" onclick="staffLogin()">Sign in</button>
+<button type="button" onclick="staffLogout()">Sign out</button>
+<p>Customer booking: <a href="https://book.dumpstercrawl.com">book.dumpstercrawl.com</a></p>
+</div>
 
 <div class="app">
 
@@ -1372,20 +1380,9 @@ price:659
    STORAGE
    ========================================= */
 
-let rentals =
-loadJSON(
-"dumpsterCrawlV3Rentals",
-[]
-);
-
-
-let customers =
-loadJSON(
-"dumpsterCrawlV3Customers",
-[]
-);
-
-
+let rentals = [];
+let customers = [];
+let secureReady = false;
 let settings =
 loadJSON(
 "dumpsterCrawlV3Settings",
@@ -1423,26 +1420,36 @@ return fallback;
 }
 
 
-function saveRentals(){
-
-localStorage.setItem(
-"dumpsterCrawlV3Rentals",
-JSON.stringify(rentals)
-);
-
+async function secureRequest(path, options={}){
+ const response=await fetch(path,{...options,credentials:'same-origin',cache:'no-store'});
+ const data=await response.json();
+ if(!response.ok) throw new Error(data.error||'Secure storage unavailable');
+ return data;
 }
-
-
-function saveCustomers(){
-
-localStorage.setItem(
-"dumpsterCrawlV3Customers",
-JSON.stringify(customers)
-);
-
+function rebuildCustomers(){
+ customers=[];
+ for(const rental of rentals){
+  const key=normalizePhone(rental.phone);
+  let item=customers.find(c=>normalizePhone(c.phone)===key);
+  if(!item){item={id:rental.id,name:rental.customer,phone:rental.phone,email:rental.email,address:rental.address,rentalCount:0};customers.push(item);}
+  item.rentalCount++;
+ }
 }
-
-
+async function refreshSecureRentals(){
+ const data=await secureRequest('/api/rentals');
+ rentals=data.rentals; rebuildCustomers(); secureReady=true; renderAll();
+ document.getElementById('secureStatus').textContent='Staff signed in. Records saved securely.';
+}
+async function staffLogin(){
+ const password=document.getElementById('staffPassword').value;
+ document.getElementById('staffPassword').value='';
+ try {await secureRequest('/api/login',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({password})});await refreshSecureRentals();}
+ catch(error){document.getElementById('secureStatus').textContent=error.message;}
+}
+async function staffLogout(){
+ try {await secureRequest('/api/logout',{method:'POST'});secureReady=false;rentals=[];customers=[];renderAll();document.getElementById('secureStatus').textContent='Staff sign-in required.';}
+ catch(error){alert(error.message);}
+}
 /* =========================================
    NAVIGATION
    ========================================= */
@@ -1655,10 +1662,12 @@ document
 )
 .addEventListener(
 "submit",
-function(event){
+async function(event){
 
 event.preventDefault();
-
+if(!secureReady){alert('Sign in as staff before creating a rental. Customers can book at book.dumpstercrawl.com.');return;}
+const submitButton=this.querySelector('[type="submit"]');
+if(submitButton.disabled)return;
 
 const customer =
 value("customerName");
@@ -1779,7 +1788,7 @@ notes,
 liabilityAccepted:true,
 liabilityAcceptedAt:new Date().toISOString(),
 signatureName,
-photoIdReceived:true,
+photoIdReceived:false,
 photoIdFileName:photoIdFile.name,
 photoIdFileType:photoIdFile.type,
 photoIdFileSize:photoIdFile.size,
@@ -1793,17 +1802,15 @@ new Date()
 };
 
 
-rentals.push(
-rental
-);
-
-
-saveRentals();
-
-
-addCustomer(
-rental
-);
+const formData=new FormData();
+formData.append('rental',JSON.stringify(rental));
+formData.append('photoId',photoIdFile);
+submitButton.disabled=true;
+try {
+ const {rental:saved}=await secureRequest('/api/rentals',{method:'POST',body:formData});
+ rentals.push(saved);rebuildCustomers();renderAll();
+} catch(error){alert(error.message);return;}
+finally {submitButton.disabled=false;}
 
 
 this.reset();
@@ -2414,7 +2421,7 @@ return`
 <h3>
 ${escapeHTML(
 rental.customer
-)}
+)}<p><a href="/api/rentals/${encodeURIComponent(rental.id)}/photo-id" target="_blank" rel="noopener">Download private photo ID</a> · <a href="/api/rentals/${encodeURIComponent(rental.id)}/agreement" target="_blank" rel="noopener">Signed agreement record</a></p>
 </h3>
 
 <div class="small">
@@ -2542,7 +2549,7 @@ ${rental.status.toUpperCase()}
    COMPLETE / CANCEL
    ========================================= */
 
-function completeRental(id){
+async function completeRental(id){
 
 const rental =
 rentals.find(
@@ -2561,18 +2568,16 @@ if(
 )return;
 
 
-rental.status=
-"completed";
+try {
+ await secureRequest('/api/rentals/'+encodeURIComponent(id),{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({status:"completed"})});
+ await refreshSecureRentals();
+} catch(error){alert(error.message);}
 
-
-saveRentals();
-
-renderAll();
 
 }
 
 
-function cancelRental(id){
+async function cancelRental(id){
 
 const rental =
 rentals.find(
@@ -2591,13 +2596,11 @@ if(
 )return;
 
 
-rental.status=
-"cancelled";
+try {
+ await secureRequest('/api/rentals/'+encodeURIComponent(id),{method:'PATCH',headers:{'content-type':'application/json'},body:JSON.stringify({status:"cancelled"})});
+ await refreshSecureRentals();
+} catch(error){alert(error.message);}
 
-
-saveRentals();
-
-renderAll();
 
 }
 
@@ -2605,73 +2608,6 @@ renderAll();
 /* =========================================
    CUSTOMERS
    ========================================= */
-
-function addCustomer(rental){
-
-const normalized =
-normalizePhone(
-rental.phone
-);
-
-
-let customer =
-customers.find(
-item=>
-normalizePhone(
-item.phone
-)===normalized
-);
-
-
-if(!customer){
-
-customer={
-
-id:createId("C"),
-
-name:
-rental.customer,
-
-phone:
-rental.phone,
-
-email:
-rental.email,
-
-address:
-rental.address,
-
-rentalCount:1
-
-};
-
-
-customers.push(
-customer
-);
-
-}
-else{
-
-customer.name=
-rental.customer;
-
-customer.email=
-rental.email;
-
-customer.address=
-rental.address;
-
-customer.rentalCount=
-(customer.rentalCount||0)+1;
-
-}
-
-
-saveCustomers();
-
-}
-
 
 function renderCustomers(){
 
@@ -3146,8 +3082,8 @@ renderSchedule();
    ========================================= */
 
 loadSettings();
-
 renderAll();
+refreshSecureRentals().catch(()=>{document.getElementById('secureStatus').textContent='Staff sign-in required. Secure server must be configured.';});
 
 </script>
 

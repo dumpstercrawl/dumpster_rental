@@ -1,0 +1,6 @@
+{
+ "name": "dumpster-crawl-v4", "main": "worker/index.js", "compatibility_date": "2026-10-07",
+ "assets": {"directory": "public", "binding": "ASSETS", "run_worker_first": true},
+ "d1_databases": [{"binding": "DB", "database_name": "dumpster-crawl-v4", "database_id": "REPLACE_WITH_PROVISIONED_ID", "migrations_dir": "migrations"}],
+ "r2_buckets": [{"binding": "BUCKET", "bucket_name": "dumpster-crawl-v4-private-ids"}]
+}
