@@ -54,7 +54,8 @@ export async function handle(request, env) {
   let body; try {body=JSON.parse(form.get('rental'));} catch {return json({error:'Invalid rental'},400);}
   if(!body || !['customer','phone','address','signatureName'].every(k=>typeof body[k]==='string' && body[k].trim() && body[k].length<=1000) || body.liabilityAccepted!==true || !Object.hasOwn(packages,body.packageId)) return json({error:'Complete required fields and accept the agreement'},400);
   if(!/^\d{4}-\d{2}-\d{2}$/.test(body.delivery)) return json({error:'Invalid delivery date'},400);
-  const date=new Date(body.delivery+'T00:00:00Z');
+  if(body.agreementVersion!==agreementVersion) return json({error:'Agreement updated. Reload the page and review the current agreement before signing.'},409);
+   const date=new Date(body.delivery+'T00:00:00Z');
   if(!Number.isFinite(date.getTime()) || date.toISOString().slice(0,10)!==body.delivery) return json({error:'Invalid delivery date'},400);
   date.setUTCDate(date.getUTCDate()+10);
   const id=crypto.randomUUID(), key=`private-ids/${id}/${crypto.randomUUID()}`, createdAt=now();
