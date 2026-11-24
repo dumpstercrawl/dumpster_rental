@@ -1265,7 +1265,7 @@ Save Settings
       <h3>Delivery, placement, and access</h3>
       <ul><li>Provide accurate placement instructions and keep the delivery area clear and accessible.</li><li>If delivery cannot be completed, reasonable contact attempts will be made. A $49 failed-delivery fee may be charged before a refund.</li><li>The dumpster may not be moved without written permission.</li><li>Blocked or unsafe pickup access may result in additional trip, delay, towing, or recovery charges.</li></ul>
       <h3>Loading and prohibited materials</h3>
-      <ul><li>Material must remain at or below the fill line. A $125 overfill fee may apply.</li><li>Excess weight is charged at $69 per ton, prorated when applicable.</li><li>No appliances, tires, batteries, paint, chemicals, hazardous waste, concrete, dirt, or bulk lumber without written approval.</li><li>The customer is responsible for costs, fines, cleanup, rejected loads, or extra trips caused by prohibited or improperly loaded materials.</li></ul>
+      <ul><li>Material must remain at or below the fill line. A $125 overfill fee may apply.</li><li>Excess weight exceeding the rental package's included weight allowance will be charged at $79 per ton for standard rentals and $99 per ton for roofing rentals. Excess-weight charges will be prorated for partial tons when applicable.</li><li>No appliances, tires, batteries, paint, chemicals, hazardous waste, concrete, dirt, or bulk lumber without written approval.</li><li>The customer is responsible for costs, fines, cleanup, rejected loads, or extra trips caused by prohibited or improperly loaded materials.</li></ul>
       <h3>Property and responsibility</h3>
       <ul><li>The customer accepts responsibility for the placement location and required permits.</li><li>The customer is responsible for loss, theft, misuse, unauthorized movement, or damage while the dumpster is at the rental address.</li><li>Driveway protection reduces risk but does not guarantee surfaces, lawns, curbs, utilities, or underground structures will not be damaged.</li><li>The customer agrees to indemnify Dumpster Crawl & Dumpster Rentals for claims arising from the customer’s placement choice, use, loading, or prohibited materials, except where prohibited by law.</li></ul>
       <h3>Payment authorization</h3>
@@ -1278,6 +1278,8 @@ Save Settings
 </div>
 
 <script>
+const rentalAgreementVersion = 'v4-2026-11-17-overage-rates';
+
 
 /* =========================================
    INVENTORY
@@ -1777,6 +1779,8 @@ paymentStatus:
 placement,
 notes,
 liabilityAccepted:true,
+agreementVersion:rentalAgreementVersion,
+agreementHtml:document.querySelector('#agreementModal .modal-body').innerHTML.split('<button')[0].trim(),
 liabilityAcceptedAt:new Date().toISOString(),
 signatureName,
 photoIdReceived:true,
