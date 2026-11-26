@@ -5,6 +5,7 @@ import {tmpdir} from 'node:os';
 import {join} from 'node:path';
 import {spawnSync} from 'node:child_process';
 import worker from '../worker/index.js';
+import {agreementVersion,agreementHtml} from '../worker/agreement.js';
 // Real SQLite SQL/transactions, with D1's binding/result shape; in-memory R2 adapter.
 class Database {
  constructor(path){this.path=path;this.fail=false;this.exec([{sql:readFileSync('migrations/0001_secure_rentals.sql','utf8'),schema:true}]);}
@@ -29,7 +30,7 @@ finally: con.close()`,this.path],{input:JSON.stringify(statements),encoding:'utf
 function setup(t){const dir=mkdtempSync(join(tmpdir(),'v4-'));t.after(()=>rmSync(dir,{recursive:true,force:true}));const objects=new Map();return {DB:new Database(join(dir,'test.sqlite')),STAFF_PASSWORD:'test-password-long-and-random',BUCKET:{async put(k,v){objects.set(k,new Uint8Array(v));},async get(k){return objects.has(k)?{body:objects.get(k)}:null;},async delete(k){objects.delete(k);}},objects};}
 async function call(env,path,options={}){return worker.fetch(new Request('https://v4.test'+path,options),env);}
 async function login(env){const response=await call(env,'/api/login',{method:'POST',headers:{origin:'https://v4.test','content-type':'application/json'},body:JSON.stringify({password:env.STAFF_PASSWORD})});assert.equal(response.status,200);return response.headers.get('set-cookie').split(';')[0];}
-const payload={customer:'Test Customer',phone:'2625550100',address:'Test street',signatureName:'Test Customer',liabilityAccepted:true,packageId:'20-1',delivery:'2026-10-15'};
+const payload={agreementVersion,customer:'Test Customer',phone:'2625550100',address:'Test street',signatureName:'Test Customer',liabilityAccepted:true,packageId:'20-1',delivery:'2026-10-15'};
 function upload(env,cookie,{bytes=new Uint8Array([137,80,78,71,13,10,26,10,1,2,3]),type='image/png',rental=payload}={}){const form=new FormData();form.append('rental',JSON.stringify(rental));form.append('photoId',new Blob([bytes],{type}),'private-test.png');return call(env,'/api/rentals',{method:'POST',headers:{origin:'https://v4.test',cookie},body:form});}
 test('upload, persistent association, byte retrieval, immutable acceptance and audit',async t=>{
  const env=setup(t),cookie=await login(env),response=await upload(env,cookie);assert.equal(response.status,201);const {rental}=await response.json();assert.equal(rental.photoIdReceived,true);assert.equal(rental.signatureName,payload.signatureName);assert.match(rental.agreementSha256,/^[a-f0-9]{64}$/);assert.equal(env.objects.size,1);
@@ -74,4 +75,14 @@ test('capacity conflict cleans uploaded object; completed rental releases capaci
  assert.equal((await upload(env,cookie)).status,409);assert.equal(env.objects.size,5);
  await call(env,`/api/rentals/${first.id}`,{method:'PATCH',headers:{cookie,origin:'https://v4.test'},body:JSON.stringify({status:'completed'})});
  assert.equal((await upload(env,cookie)).status,201);
+});
+
+test('current agreement rates and stale version rejection',async t=>{
+ assert.match(agreementHtml,/\$79 per ton for standard rentals and \$99 per ton for roofing rentals/);
+ assert.doesNotMatch(agreementHtml,/\$69 per ton/);
+ const env=setup(t),cookie=await login(env);
+ for(const version of [undefined,'legacy-version']) assert.equal((await upload(env,cookie,{rental:{...payload,agreementVersion:version}})).status,409);
+ assert.equal(env.objects.size,0);
+ const response=await upload(env,cookie);assert.equal(response.status,201);
+ const {rental}=await response.json();assert.equal(rental.agreementVersion,agreementVersion);assert.equal(rental.agreementHtml,agreementHtml);
 });
